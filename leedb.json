@@ -1,0 +1,514 @@
+{
+	"product_items": {
+		"sku": {
+			"type": "INTEGER",
+			"rules": "(KEY-NOTNULL-UNIQUE)",
+			"format": null,
+			"default": null
+		},
+		"pf_id": {
+			"type": "TEXT",
+			"rules": "(NOTNULL)",
+			"format": "alpha16",
+			"default": null
+		},
+		"attr_value1": {
+			"type": "TEXT",
+			"rules": null,
+			"format": null,
+			"default": null
+		},
+		"attr_value2": {
+			"type": "TEXT",
+			"rules": null,
+			"format": null,
+			"default": null
+		},
+		"attr_value3": {
+			"type": "TEXT",
+			"rules": null,
+			"format": null,
+			"default": null
+		},
+		"attr_value4": {
+			"type": "TEXT",
+			"rules": null,
+			"format": null,
+			"default": null
+		},
+		"vendor_code": {
+			"type": "TEXT",
+			"rules": null,
+			"format": "char3",
+			"default": null
+		},
+		"price": {
+			"type": "REAL",
+			"rules": null,
+			"format": "price",
+			"default": null
+		},
+		"cost": {
+			"type": "REAL",
+			"rules": null,
+			"format": "price",
+			"default": null
+		},
+		"out_orders": {
+			"type": "INTEGER",
+			"rules": null,
+			"format": "bool",
+			"default": "0"
+		},
+		"orders_sent": {
+			"type": "INTEGER",
+			"rules": null,
+			"format": null,
+			"default": "0"
+		},
+		"setback": {
+			"type": "INTEGER",
+			"rules": null,
+			"format": null,
+			"default": "0"
+		},
+		"backorder": {
+			"type": "INTEGER",
+			"rules": null,
+			"format": null,
+			"default": "0"
+		},
+		"inventory_level": {
+			"type": "INTEGER",
+			"rules": null,
+			"format": null,
+			"default": "0"
+		},
+		"order_code": {
+			"type": "TEXT",
+			"rules": null,
+			"format": null,
+			"default": null
+		},
+		"img_large": {
+			"type": "TEXT",
+			"rules": null,
+			"format": "url",
+			"default": null
+		}
+	},
+	"product_groups": {
+		"pf_id": {
+			"type": "TEXT",
+			"rules": "(KEY-NOTNULL-UNIQUE)",
+			"format": "alpha16",
+			"default": null
+		},
+		"name": {
+			"type": "TEXT",
+			"rules": "(NOTNULL)",
+			"format": null,
+			"default": null
+		},
+		"dept_id": {
+			"type": "INTEGER",
+			"rules": "(NOTNULL)",
+			"format": "int4",
+			"default": null
+		},
+		"description": {
+			"type": "TEXT",
+			"rules": null,
+			"format": null,
+			"default": null
+		},
+		"msrp_price": {
+			"type": "REAL",
+			"rules": null,
+			"format": "price",
+			"default": null
+		},
+		"list_price": {
+			"type": "REAL",
+			"rules": null,
+			"format": "price",
+			"default": null
+		},
+		"img_thumbnail": {
+			"type": "TEXT",
+			"rules": null,
+			"format": "url",
+			"default": null
+		},
+		"sale_price": {
+			"type": "REAL",
+			"rules": null,
+			"format": "price",
+			"default": null
+		},
+		"sale_start": {
+			"type": "TEXT",
+			"rules": null,
+			"format": "date",
+			"default": null
+		},
+		"sale_end": {
+			"type": "TEXT",
+			"rules": null,
+			"format": "date",
+			"default": null
+		},
+		"img_med": {
+			"type": "TEXT",
+			"rules": null,
+			"format": "url",
+			"default": null
+		},
+		"attr_label1": {
+			"type": "TEXT",
+			"rules": null,
+			"format": null,
+			"default": null
+		},
+		"attr_label2": {
+			"type": "TEXT",
+			"rules": null,
+			"format": null,
+			"default": null
+		},
+		"attr_label3": {
+			"type": "TEXT",
+			"rules": null,
+			"format": null,
+			"default": null
+		},
+		"attr_label4": {
+			"type": "TEXT",
+			"rules": null,
+			"format": null,
+			"default": null
+		}
+	},
+	"categories": {
+		"id": {
+			"type": "INTEGER",
+			"rules": "(KEY-NOTNULL-UNIQUE)",
+			"format": "int4",
+			"default": null
+		},
+		"parent": {
+			"type": "INTEGER",
+			"rules": null,
+			"format": "int4",
+			"default": null
+		},
+		"description": {
+			"type": "TEXT",
+			"rules": null,
+			"format": null,
+			"default": null
+		},
+		"img": {
+			"type": "TEXT",
+			"rules": null,
+			"format": "url",
+			"default": null
+		},
+		"rpro_id": {
+			"type": "TEXT",
+			"rules": "(UNIQUE)",
+			"format": "alpha16",
+			"default": null
+		}
+	},
+	"customers": {
+		"id": {
+			"type": "TEXT",
+			"rules": "(KEY-NOTNULL-UNIQUE)",
+			"format": null,
+			"default": null
+		},
+		"last_name": {
+			"type": "TEXT",
+			"rules": "(NOTNULL)",
+			"format": null,
+			"default": null
+		},
+		"first_name": {
+			"type": "TEXT",
+			"rules": "(NOTNULL)",
+			"format": null,
+			"default": null
+		},
+		"street1": {
+			"type": "TEXT",
+			"rules": null,
+			"format": null,
+			"default": null
+		},
+		"street2": {
+			"type": "TEXT",
+			"rules": null,
+			"format": null,
+			"default": null
+		},
+		"city": {
+			"type": "TEXT",
+			"rules": null,
+			"format": null,
+			"default": null
+		},
+		"state": {
+			"type": "TEXT",
+			"rules": null,
+			"format": null,
+			"default": null
+		},
+		"zip": {
+			"type": "TEXT",
+			"rules": null,
+			"format": null,
+			"default": null
+		},
+		"country": {
+			"type": "TEXT",
+			"rules": null,
+			"format": null,
+			"default": "US"
+		},
+		"phone": {
+			"type": "TEXT",
+			"rules": null,
+			"format": "phone",
+			"default": null
+		},
+		"email": {
+			"type": "TEXT",
+			"rules": "(UNIQUE)",
+			"format": "email",
+			"default": null
+		},
+		"rpro_id": {
+			"type": "TEXT",
+			"rules": "(UNIQUE)",
+			"format": "alpha16",
+			"default": null
+		},
+		"pref1": {
+			"type": "INTEGER",
+			"rules": null,
+			"format": "bool",
+			"default": null
+		},
+		"pref2": {
+			"type": "INTEGER",
+			"rules": null,
+			"format": "bool",
+			"default": null
+		},
+		"pref3": {
+			"type": "INTEGER",
+			"rules": null,
+			"format": "bool",
+			"default": null
+		},
+		"pref4": {
+			"type": "INTEGER",
+			"rules": null,
+			"format": "bool",
+			"default": null
+		},
+		"notes": {
+			"type": "TEXT",
+			"rules": null,
+			"format": null,
+			"default": null
+		},
+		"date_created": {
+			"type": "TEXT",
+			"rules": "(NOTNULL)",
+			"format": "date",
+			"default": null
+		}
+	},
+	"order_items": {
+		"id": {
+			"type": "INTEGER",
+			"rules": "(KEY-NOTNULL)",
+			"format": null,
+			"default": null
+		},
+		"sku": {
+			"type": "INTEGER",
+			"rules": "(KEY-NOTNULL)",
+			"format": null,
+			"default": null
+		},
+		"quantity": {
+			"type": "INTEGER",
+			"rules": null,
+			"format": null,
+			"default": null
+		},
+		"price_item": {
+			"type": "REAL",
+			"rules": null,
+			"format": "price",
+			"default": null
+		},
+		"price_discount": {
+			"type": "REAL",
+			"rules": null,
+			"format": "price",
+			"default": null
+		}
+	},
+	"orders": {
+		"id": {
+			"type": "INTEGER",
+			"rules": "(KEY-NOTNULL-UNIQUE)",
+			"format": null,
+			"default": null
+		},
+		"cust_id": {
+			"type": "INTEGER",
+			"rules": "(NOTNULL)",
+			"format": null,
+			"default": null
+		},
+		"ship_name": {
+			"type": "TEXT",
+			"rules": "(NOTNULL)",
+			"format": null,
+			"default": null
+		},
+		"ship_address1": {
+			"type": "TEXT",
+			"rules": "(NOTNULL)",
+			"format": null,
+			"default": null
+		},
+		"ship_address2": {
+			"type": "TEXT",
+			"rules": null,
+			"format": null,
+			"default": null
+		},
+		"ship_city": {
+			"type": "TEXT",
+			"rules": "(NOTNULL)",
+			"format": null,
+			"default": null
+		},
+		"ship_state": {
+			"type": "TEXT",
+			"rules": "(NOTNULL)",
+			"format": null,
+			"default": null
+		},
+		"ship_zip": {
+			"type": "TEXT",
+			"rules": "(NOTNULL)",
+			"format": null,
+			"default": null
+		},
+		"ship_country": {
+			"type": "TEXT",
+			"rules": "(NOTNULL)",
+			"format": null,
+			"default": "US"
+		},
+		"ship_phone": {
+			"type": "TEXT",
+			"rules": null,
+			"format": "phone",
+			"default": null
+		},
+		"txn_time": {
+			"type": "TEXT",
+			"rules": "(NOTNULL)",
+			"format": "time",
+			"default": null
+		},
+		"txn_date": {
+			"type": "INTEGER",
+			"rules": "(NOTNULL)",
+			"format": "date",
+			"default": null
+		},
+		"price_total": {
+			"type": "REAL",
+			"rules": "(NOTNULL)",
+			"format": "price",
+			"default": null
+		},
+		"price_base": {
+			"type": "REAL",
+			"rules": "(NOTNULL)",
+			"format": "price",
+			"default": null
+		},
+		"price_shipping": {
+			"type": "REAL",
+			"rules": null,
+			"format": "price",
+			"default": null
+		},
+		"price_tax": {
+			"type": "REAL",
+			"rules": null,
+			"format": "price",
+			"default": null
+		},
+		"price_discount": {
+			"type": "REAL",
+			"rules": null,
+			"format": "price",
+			"default": null
+		},
+		"status": {
+			"type": "TEXT",
+			"rules": "(NOTNULL)",
+			"format": null,
+			"default": null
+		},
+		"cust_note": {
+			"type": "TEXT",
+			"rules": null,
+			"format": null,
+			"default": null
+		},
+		"cust_ip": {
+			"type": "TEXT",
+			"rules": "(NOTNULL)",
+			"format": "ip",
+			"default": null
+		}
+	},
+	"shipping": {
+		"order_id": {
+			"type": "INTEGER",
+			"rules": "(KEY-NOTNULL-UNIQUE)",
+			"format": null,
+			"default": null
+		},
+		"tracking_id": {
+			"type": "TEXT",
+			"rules": "(NOTNULL-UNIQUE)",
+			"format": null,
+			"default": null
+		},
+		"carrier": {
+			"type": "TEXT",
+			"rules": "(NOTNULL)",
+			"format": null,
+			"default": null
+		},
+		"ship_date": {
+			"type": "TEXT",
+			"rules": "(NOTNULL)",
+			"format": null,
+			"default": null
+		}
+	}
+}
