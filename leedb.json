@@ -1,5 +1,6 @@
 {
 	"product_items": {
+		"KEY": "sku",
 		"sku": {
 			"type": "INTEGER",
 			"rules": "(KEY-NOTNULL-UNIQUE)",
@@ -98,6 +99,7 @@
 		}
 	},
 	"product_groups": {
+		"KEY": "pf_id",
 		"pf_id": {
 			"type": "TEXT",
 			"rules": "(KEY-NOTNULL-UNIQUE)",
@@ -196,6 +198,7 @@
 		}
 	},
 	"categories": {
+		"KEY": "id",
 		"id": {
 			"type": "INTEGER",
 			"rules": "(KEY-NOTNULL-UNIQUE)",
@@ -204,7 +207,7 @@
 		},
 		"name": {
 			"type": "TEXT",
-			"rules": "(KEY-NOTNULL)",
+			"rules": "(NOTNULL)",
 			"format": null,
 			"default": null
 		},
@@ -240,6 +243,7 @@
 		}
 	},
 	"customers": {
+		"KEY": "id",
 		"id": {
 			"type": "TEXT",
 			"rules": "(KEY-NOTNULL-UNIQUE)",
@@ -350,7 +354,8 @@
 		}
 	},
 	"order_items": {
-		"id": {
+		"KEY": "order_id-sku",
+		"order_id": {
 			"type": "INTEGER",
 			"rules": "(KEY-NOTNULL)",
 			"format": null,
@@ -382,6 +387,7 @@
 		}
 	},
 	"orders": {
+		"KEY": "id",
 		"id": {
 			"type": "INTEGER",
 			"rules": "(KEY-NOTNULL-UNIQUE)",
@@ -504,6 +510,7 @@
 		}
 	},
 	"shipping": {
+		"KEY": "order_id",
 		"order_id": {
 			"type": "INTEGER",
 			"rules": "(KEY-NOTNULL-UNIQUE)",
