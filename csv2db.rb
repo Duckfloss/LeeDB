@@ -2,10 +2,12 @@
 require 'sqlite3'
 require 'csv'
 require 'json'
+require 'date'
 require 'yaml'
 
 # Load presets
-db = "lee.db"
+$db = "lee.db"
+$log = "/logs/"+DateTime.now.strftime('%Y%m%d%H%M%S')+".txt"
 settings = YAML::load_file "settings.yml"
 os = settings["os"]
 
@@ -23,7 +25,8 @@ db_rule = [ 'KEY','NOTNULL','UNIQUE' ]
 # Load db schema
 db_schema = JSON.parse(File.read('leedb.json'), :symbolize_names=>true)
 # Load db map
-uniteu-leedb_map = JSON.parse(File.read('uniteu-leedb_map.json'), :symbolize_names=>true)
+uniteu_leedb_map = JSON.parse(File.read('uniteu_leedb_map.json'), :symbolize_names=>true)
+$tables = uniteu_leedb_map[:tables]
 
 # Validate field data
 def validate(string, format)
@@ -36,38 +39,108 @@ def validate(string, format)
 		:bool => /\A(0|1|no|yes|true|false)\Z/,
 		:url => /\A[\d\w]+\.+[\w]{1,4}\Z/,
 		:date => /\A\d{2}\/\d{2}\/\d{2}\Z/,
-		:time => /\A\d{2}\:\d{2}\:\d{2}\ (A|P)\Z/,
+		:time => /\A\d{2}\:\d{2}\:\d{2}\ (A|P)M\Z/,
 		:phone => /\A[\d\-\(\)\.]+\Z/,
-		:email => /\A[\w\d\.\#-\_\~\$\&\'\(\)\*\+\,\;\=\:\%]+\@[\w\d]+\.\w{1,4}\Z/,
+		:email => /\A[\w\d\.\#-\_\~\$\&\'\(\)\*\+\,\;\=\:\%]+\@[\w\d]+\.\w{1,4}\Z/
 	}
 	format = formats[:"#{format}"]
 	!string[format].nil?
 end
 
+# Try to guess which table we're working on here
+def guess_table(file)
+	file.downcase!
+	$tables.each do |t|
+		if file.match(t)
+			table = t
+			return table
+		end
+	end
+	puts "What table does #{file} map to:\n"
+	$tables.each do |t|
+		puts "\t#{t}\n"
+	end
+	table = gets.chomp
+	return table
+end
 
+# Write to log
+def write_log(string)
+	File.open($log, 'a') do |log|
+		log.puts "#{string}\n"
+	end
+end
+
+# Check UID
+def check_uid(table, uid)
+
+end
+
+# Update product
+def update_product(data)
+
+end
+
+# Insert new product
+def new_product(data)
+
+end
+
+# Update customer
+def update_product(data)
+
+end
+
+# Insert new customer
+def new_product(data)
+
+end
+
+# Insert new order
+def new_product(data)
+
+end
+
+# Update category
+def update_product(data)
+
+end
+
+# Insert new category
+def new_product(data)
+
+end
 
 
 
 # main function
 def doit(file)
-  # open CSV file
-  data = CSV.read(file, :headers => true,:skip_blanks => true,:header_converters => :symbol)
 
-  # open a new file
-  File.open(csv_target, 'a') do |file|
-    data.each do |row|
-      if row[:desc] != nil
-        row.each do |head,field|
-          if head == :desc
-            row[:desc] = formatify(field)
-          end
-        end
-        file.puts row
-      else
-        file.puts row
-      end
-    end
-  end
+	table = guess_table(file)
+
+	# Open CSV file
+	data = CSV.read(file, :headers => true,:skip_blanks => true,:header_converters => :symbol)
+
+	data.each do |row|
+		uid = db_schema[:"#{table}"]["KEY"]
+		if check_uid(table, uid)
+	end
+
+	# open a new file
+	File.open(csv_target, 'a') do |file|
+		data.each do |row|
+			if row[:desc] != nil
+				row.each do |head,field|
+					if head == :desc
+						row[:desc] = formatify(field)
+					end
+				end
+				file.puts row
+			else
+				file.puts row
+			end
+		end
+	end
 end
 
 # run the main function
