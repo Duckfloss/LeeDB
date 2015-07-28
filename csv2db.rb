@@ -1,5 +1,4 @@
 
-
 require 'sqlite3'
 require 'csv'
 require 'json'
@@ -10,7 +9,7 @@ db = "lee.db"
 settings = YAML::load_file "settings.yml"
 os = settings["os"]
 
-# Load commandline files
+# Load commandline files to import
 files = []
 ARGV.each do |a|
 	files << a
@@ -19,34 +18,34 @@ end
 # Database field options
 db_type = [ 'TEXT','REAL','INTEGER' ]
 db_format = [ 'alpha16','char3','price','bool','url','int4','date','time','phone','email' ]
-db_rule = ['KEY','NOTNULL','UNIQUE' ]
+db_rule = [ 'KEY','NOTNULL','UNIQUE' ]
 
-# Parse db schema
+# Load db schema
 db_schema = JSON.parse(File.read('leedb.json'), :symbolize_names=>true)
+# Load db map
+uniteu-leedb_map = JSON.parse(File.read('uniteu-leedb_map.json'), :symbolize_names=>true)
 
+# Validate field data
 def validate(string, format)
-
 	# validation patterns
-	alpha16 = /\A[a-zA-Z]{16}\Z/
-	char3 = /\A[\w\d\ \+\.\&]{2,3}\Z/
-	int4 = /\A\d{4}\Z/
-	price = /\A[\d\.]+\Z/
-	bool = /\A(0|1|no|yes|true|false)\Z/
-	url = /\A[\d\w]+\.+[\w]{1,4}\Z/
-	date = /\A\d{2}\/\d{2}\/\d{2}\Z/
-	time = /\A\d{2}\:\d{2}\:\d{2}\ (A|P)\Z/
-	phone = /\A[\d\-\(\)\.]+\Z/
-	email = /\A[\w\d\.\#-\_\~\$\&\'\(\)\*\+\,\;\=\:\%]+\@[\w\d]+\.\w{1,4}\Z/
-
-
-
+	formats = {
+		:alpha16 => /\A[a-zA-Z]{16}\Z/,
+		:char3 => /\A[\w\d\ \+\.\&]{2,3}\Z/,
+		:int4 => /\A\d{4}\Z/,
+		:price => /\A[\d\.]+\Z/,
+		:bool => /\A(0|1|no|yes|true|false)\Z/,
+		:url => /\A[\d\w]+\.+[\w]{1,4}\Z/,
+		:date => /\A\d{2}\/\d{2}\/\d{2}\Z/,
+		:time => /\A\d{2}\:\d{2}\:\d{2}\ (A|P)\Z/,
+		:phone => /\A[\d\-\(\)\.]+\Z/,
+		:email => /\A[\w\d\.\#-\_\~\$\&\'\(\)\*\+\,\;\=\:\%]+\@[\w\d]+\.\w{1,4}\Z/,
+	}
+	format = formats[:"#{format}"]
+	!string[format].nil?
 end
 
-class String
-def validate reg
-!self[reg].nil?
-end
-end
+
+
 
 
 # main function
