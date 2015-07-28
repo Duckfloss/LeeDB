@@ -187,6 +187,12 @@
 			"rules": null,
 			"format": null,
 			"default": null
+		},
+		"google_shopping": {
+			"type": "INTEGER",
+			"rules": null,
+			"format": "int4",
+			"default": null
 		}
 	},
 	"categories": {
@@ -226,7 +232,7 @@
 			"format": "alpha16",
 			"default": null
 		},
-		"google_shopping": {
+		"google_shopping_map": {
 			"type": "TEXT",
 			"rules": null,
 			"format": null,
