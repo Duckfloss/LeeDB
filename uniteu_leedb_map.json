@@ -1,4 +1,12 @@
 {
+	"tables": {
+		"products": "product_groups",
+		"variants": "product_items",
+		"departments": "categories",
+		"shoppers": "customers",
+		"salesorderssubitems": "order_items",
+		"salesorders": "orders"
+	},
 	"products": {
 		"table": "product_groups",
 		"fields": {
@@ -58,7 +66,6 @@
 			"attr_label5": null
 		}
 	},
-
 	"variants": {
 		"table": "product_items",
 		"fields": {
@@ -90,7 +97,6 @@
 			"inventory_level": "inventory_level"
 		}
 	},
-
 	"departments": {
 		"table": "categories",
 		"fields": {
@@ -135,8 +141,6 @@
 			"dept_rpro_dcs": null
 		}
 	},
-
-
 	"shoppers": {
 		"table": "customers",
 		"fields": {
@@ -163,7 +167,6 @@
 			"preferred_code": null
 		}
 	},
-
 	"salesorders": {
 		"table": "orders",
 		"fields": {
@@ -244,9 +247,6 @@
 			"remote_host_name": null
 		}
 	},
-
-
-
 	"salesorderssubitems": {
 		"table": "order_items",
 		"fields": {
