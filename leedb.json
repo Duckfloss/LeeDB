@@ -196,6 +196,12 @@
 			"format": "int4",
 			"default": null
 		},
+		"name": {
+			"type": "TEXT",
+			"rules": "(KEY-NOTNULL)",
+			"format": null,
+			"default": null
+		},
 		"parent": {
 			"type": "INTEGER",
 			"rules": null,
@@ -218,6 +224,12 @@
 			"type": "TEXT",
 			"rules": "(UNIQUE)",
 			"format": "alpha16",
+			"default": null
+		},
+		"google_shopping": {
+			"type": "TEXT",
+			"rules": null,
+			"format": null,
 			"default": null
 		}
 	},
