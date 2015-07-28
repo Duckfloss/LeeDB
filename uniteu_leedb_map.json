@@ -1,12 +1,12 @@
 {
-	"tables": {
-		"products": "product_groups",
-		"variants": "product_items",
-		"departments": "categories",
-		"shoppers": "customers",
-		"salesorderssubitems": "order_items",
-		"salesorders": "orders"
-	},
+	"tables": [
+		"products",
+		"variants",
+		"departments",
+		"shoppers",
+		"salesorderssubitems",
+		"salesorders"
+	],
 	"products": {
 		"table": "product_groups",
 		"fields": {
