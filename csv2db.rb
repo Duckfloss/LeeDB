@@ -32,6 +32,7 @@ $tables = uniteu_leedb_map[:tables]
 def validate(string, format)
 	# validation patterns
 	formats = {
+		:file => /\A[\S]+\.csv\Z/,
 		:alpha16 => /\A[a-zA-Z]{16}\Z/,
 		:char3 => /\A[\w\d\ \+\.\&]{2,3}\Z/,
 		:int4 => /\A\d{4}\Z/,
@@ -114,7 +115,16 @@ end
 
 
 # main function
-def doit(file)
+def doit(files)
+	files.each do |file|
+
+
+
+	end
+end
+
+
+def something()
 
 	table = guess_table(file)
 
@@ -143,14 +153,6 @@ def doit(file)
 	end
 end
 
-# run the main function
-files.each do |file|
-	doit(file)
-end
-
-
-
-
 
 
 =begin
@@ -176,3 +178,6 @@ end
 
 db.execute( "select * from users" ) # => [["ben", 12], ["sally", 39]]
 =end
+
+# Run the main function
+doit(files)
