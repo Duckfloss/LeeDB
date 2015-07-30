@@ -127,17 +127,19 @@ end
 def parse_csv(file)
 	# Guess what kind of file it is
 	table = guess_table(file)
+	# Load corresponding schema
+	schema = db_schema[:"#{table}"]
 
 	# Break it open and go through rows
 	rows = CSV.read(file, :headers => true,:skip_blanks => true,:header_converters => :symbol)
 	rows.each do |rows|
-		# Load schema
-		schema = db_schema[:"#{table}"]
 		
 	end
 end
 
+def parse_row(row)
 
+end
 
 
 
