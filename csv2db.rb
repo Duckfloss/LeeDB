@@ -66,9 +66,21 @@ def guess_table(file)
 end
 
 # Write to log
-def write_log(string)
+def write_log(string, code)
+
+	# 10-19 = file errors
+	# 20-29 = csv errors
+	# 30-39 = data errors
+	# 40-49 = sql input errors
+	errors = {
+		10=> "#{string} is not a valid file name",
+		11=> "File name #{string} does not exist in this location"
+	}
+
+	error_msg = errors[code]
+
 	File.open($log, 'a') do |log|
-		log.puts "#{string}\n"
+		log.puts "#{error_msg}\n"
 	end
 end
 
@@ -88,27 +100,27 @@ def new_product(data)
 end
 
 # Update customer
-def update_product(data)
+def update_customer(data)
 
 end
 
 # Insert new customer
-def new_product(data)
+def new_customer(data)
 
 end
 
 # Insert new order
-def new_product(data)
+def new_order(data)
 
 end
 
 # Update category
-def update_product(data)
+def update_category(data)
 
 end
 
 # Insert new category
-def new_product(data)
+def new_category(data)
 
 end
 
@@ -116,16 +128,33 @@ end
 
 # main function
 def doit(files)
+	# For each file
 	files.each do |file|
+		# Check if it's a csv
+		if !validate(file,:file)
+			write_log(file, 10)
+			break
+		else
+			# Guess what kind of file it is
+			table = guess_table(file)
 
-
-
+			# Break it open and go through rows
+			rows = CSV.read(file, :headers => true,:skip_blanks => true,:header_converters => :symbol)
+			rows.each do |rows|
+				
+			end
+		end
 	end
 end
 
 
-def something()
 
+
+
+
+=begin
+
+def something()
 	table = guess_table(file)
 
 	# Open CSV file
@@ -154,8 +183,6 @@ def something()
 end
 
 
-
-=begin
 db = SQLite3::Database.new ":memory:"
 
 # Create a database
