@@ -25,8 +25,8 @@ db_rule = [ 'KEY','NOTNULL','UNIQUE' ]
 # Load db schema
 db_schema = JSON.parse(File.read('leedb.json'), :symbolize_names=>true)
 # Load db map
-uniteu_leedb_map = JSON.parse(File.read('uniteu_leedb_map.json'), :symbolize_names=>true)
-$tables = uniteu_leedb_map[:tables]
+map = JSON.parse(File.read('uniteu_leedb_map.json'), :symbolize_names=>true)
+$tables = map[:tables]
 
 # Validate field data
 def validate(string, format)
@@ -124,23 +124,28 @@ def new_category(data)
 
 end
 
+
+def parse_row(row)
+	# Validate fields
+	row.each do |field|
+		#
+	end
+end
+
+
 def parse_csv(file)
 	# Guess what kind of file it is
 	table = guess_table(file)
 	# Load corresponding schema
 	schema = db_schema[:"#{table}"]
+	uid = schema[:KEY]
 
 	# Break it open and go through rows
 	rows = CSV.read(file, :headers => true,:skip_blanks => true,:header_converters => :symbol)
 	rows.each do |rows|
-		
+		parse_row(row)
 	end
 end
-
-def parse_row(row)
-
-end
-
 
 
 # main function
