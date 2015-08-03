@@ -3,30 +3,30 @@ require 'sqlite3'
 require 'csv'
 require 'json'
 require 'date'
-require 'yaml'
+#require 'yaml'
 
 # Load presets
 $db = "lee.db"
 $log = "/logs/"+DateTime.now.strftime('%Y%m%d%H%M%S')+".txt"
-settings = YAML::load_file "settings.yml"
-os = settings["os"]
+#settings = YAML::load_file "settings.yml"
+#os = settings["os"]
 
 # Load commandline files to import
-files = []
+$files = []
 ARGV.each do |a|
-	files << a
+	$files << a
 end
 
 # Database field options
-db_type = [ 'TEXT','REAL','INTEGER' ]
-db_format = [ 'alpha16','char3','price','bool','url','int4','date','time','phone','email' ]
-db_rule = [ 'KEY','NOTNULL','UNIQUE' ]
+$db_type = [ 'TEXT','REAL','INTEGER' ]
+$db_format = [ 'alpha16','char3','price','bool','url','int4','date','time','phone','email' ]
+$db_rule = [ 'KEY','NOTNULL','UNIQUE' ]
 
 # Load db schema
-db_schema = JSON.parse(File.read('leedb.json'), :symbolize_names=>true)
+$db_schema = JSON.parse(File.read('leedb.json'), :symbolize_names=>true)
 # Load db map
-map = JSON.parse(File.read('uniteu_leedb_map.json'), :symbolize_names=>true)
-$tables = map[:tables]
+$map = JSON.parse(File.read('uniteu_leedb_map.json'), :symbolize_names=>true)
+$tables = $map[:tables]
 
 # Validate field data
 def validate(string, format)
@@ -67,7 +67,6 @@ end
 
 # Write to log
 def write_log(string, code)
-
 	# 10-19 = file errors
 	# 20-29 = csv errors
 	# 30-39 = data errors
@@ -76,9 +75,7 @@ def write_log(string, code)
 		10=> "#{string} is not a valid file name",
 		11=> "File name #{string} does not exist in this location"
 	}
-
 	error_msg = errors[code]
-
 	File.open($log, 'a') do |log|
 		log.puts "#{error_msg}\n"
 	end
@@ -137,7 +134,7 @@ def parse_csv(file)
 	# Guess what kind of file it is
 	table = guess_table(file)
 	# Load corresponding schema
-	schema = db_schema[:"#{table}"]
+	schema = $db_schema[:"#{table}"]
 	uid = schema[:KEY]
 
 	# Break it open and go through rows
@@ -222,4 +219,4 @@ db.execute( "select * from users" ) # => [["ben", 12], ["sally", 39]]
 =end
 
 # Run the main function
-doit(files)
+doit($files)
