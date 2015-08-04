@@ -10,7 +10,7 @@
 	"products": {
 		"table": "product_groups",
 		"fields": {
-			"dept_id": "dept_id",
+			"dept_id": "./product_meta/dept_id",
 			"sort_index": null,
 			"pf_id": "pf_id",
 			"name": "name",
