@@ -112,12 +112,6 @@
 			"format": null,
 			"default": null
 		},
-		"dept_id": {
-			"type": "INTEGER",
-			"rules": "(NOTNULL)",
-			"format": "int4",
-			"default": null
-		},
 		"description": {
 			"type": "TEXT",
 			"rules": null,
@@ -193,6 +187,21 @@
 		"google_shopping": {
 			"type": "INTEGER",
 			"rules": null,
+			"format": "int4",
+			"default": null
+		}
+	},
+	"product_meta": {
+		"KEY": "pf_id-category_id",
+		"pf_id": {
+			"type": "TEXT",
+			"rules": "(KEY-NOTNULL)",
+			"format": "alpha16",
+			"default": null
+		},
+		"category_id": {
+			"type": "INTEGER",
+			"rules": "(KEY-NOTNULL)",
 			"format": "int4",
 			"default": null
 		}
