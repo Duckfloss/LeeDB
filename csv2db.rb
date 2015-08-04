@@ -26,7 +26,6 @@ $db_rule = [ 'KEY','NOTNULL','UNIQUE' ]
 $db_schema = JSON.parse(File.read('leedb.json'), :symbolize_names=>true)
 # Load db map
 $map = JSON.parse(File.read('uniteu_leedb_map.json'), :symbolize_names=>true)
-$tables = $map[:tables]
 
 # Validate field data
 def validate(string, format)
@@ -51,14 +50,14 @@ end
 # Try to guess which table we're working on here
 def guess_table(file)
 	file.downcase!
-	$tables.each do |t|
+	$map[:tables].each do |t|
 		if file.match(t)
 			table = t
 			return table
 		end
 	end
 	puts "What table does #{file} map to:\n"
-	$tables.each do |t|
+	$map[:tables].each do |t|
 		puts "\t#{t}\n"
 	end
 	table = gets.chomp
@@ -73,7 +72,8 @@ def write_log(string, code)
 	# 40-49 = sql input errors
 	errors = {
 		10=> "#{string} is not a valid file name",
-		11=> "File name #{string} does not exist in this location"
+		11=> "File name #{string} does not exist in this location",
+		30=> "#{string} isn't the valid data type"
 	}
 	error_msg = errors[code]
 	File.open($log, 'a') do |log|
@@ -137,6 +137,8 @@ def build_map(table)
 	end
 end
 
+
+
 def parse_csv(file)
 	# Guess what kind of file it is
 	csv_table = guess_table(file)
@@ -149,8 +151,21 @@ def parse_csv(file)
 	# Break it open and go through rows
 	rows = CSV.read(file, :headers => true,:skip_blanks => true,:header_converters => :symbol)
 	rows.each do |row|
-		row.each do |field|
-
+		# Create hash for holding this row's data intended for db
+		sqlite_hash = Hash.new
+		# Go through each row's fields
+		row.each do |head, field|
+			# What format should this field be?
+			this_format = schema[:"#{head}"][:format]
+			# If there's no format, skip validation and put it in hash
+			# If it validates, put it in the hash
+			if this_format==nil || validate(field, :"#{this_format}") == true
+				sqlite_hash["#{head}"] = "#{field}"
+			else
+				# If it's not valid, put it in the log and move on
+				write_log(field,"30")
+				break
+			end
 		end
 	end
 end
