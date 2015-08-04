@@ -129,12 +129,16 @@ def parse_row(row)
 	end
 end
 
+def split_json_variables(string)
+	string.split("-")
+end
 
 def parse_csv(file)
 	# Guess what kind of file it is
 	table = guess_table(file)
 	# Load corresponding schema
-	schema = $db_schema[:"#{table}"]
+	db_table = $map[:"#{table}"][:table]
+	schema = $db_schema[:"#{db_table}"]
 	uid = schema[:KEY]
 
 	# Break it open and go through rows
