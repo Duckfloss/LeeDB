@@ -151,10 +151,13 @@ def parse_csv(file)
 	# Break it open and go through rows
 	rows = CSV.read(file, :headers => true,:skip_blanks => true,:header_converters => :symbol)
 	rows.each do |row|
+		# Variable switch will tell us if this row is trash
+		trash = false
 		# Create hash for holding this row's data intended for db
 		sqlite_hash = Hash.new
 		# Go through each row's fields
 		row.each do |head, field|
+			break if trash==true
 			# What format should this field be?
 			this_format = schema[:"#{head}"][:format]
 			# If there's no format, skip validation and put it in hash
@@ -166,6 +169,9 @@ def parse_csv(file)
 				write_log(field,"30")
 				break
 			end
+			# Put data in the db
+			puts_to_db(sqlite_hash, db_table)
+
 		end
 	end
 end
