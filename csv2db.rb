@@ -121,30 +121,37 @@ def new_category(data)
 
 end
 
-
-def parse_row(row)
-	# Validate fields
-	row.each do |field|
-		#
-	end
-end
-
+# Splits variables from json files
 def split_json_variables(string)
 	string.split("-")
 end
 
+# Builds a hash to map source data for processing
+def build_map(table)
+	x = $map[:"#{table}"][:fields]
+	map_hash = Hash.new
+	x.each do |head,field|
+		unless field==nil
+			map_hash["#{head}"] = "#{field}"
+		end
+	end
+end
+
 def parse_csv(file)
 	# Guess what kind of file it is
-	table = guess_table(file)
+	csv_table = guess_table(file)
 	# Load corresponding schema
-	db_table = $map[:"#{table}"][:table]
+	db_table = $map[:"#{csv_table}"][:table]
+	this_map = build_map(csv_table)
 	schema = $db_schema[:"#{db_table}"]
 	uid = schema[:KEY]
 
 	# Break it open and go through rows
 	rows = CSV.read(file, :headers => true,:skip_blanks => true,:header_converters => :symbol)
-	rows.each do |rows|
-		parse_row(row)
+	rows.each do |row|
+		row.each do |field|
+
+		end
 	end
 end
 
