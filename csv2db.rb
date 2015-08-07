@@ -3,10 +3,11 @@ require 'sqlite3'
 require 'csv'
 require 'json'
 require 'date'
+require 'csv2db/records'
 #require 'yaml'
 
 # Load presets
-$db = "lee.db"
+$db_file = "lee.db"
 $log = "/logs/"+DateTime.now.strftime('%Y%m%d%H%M%S')+".txt"
 #settings = YAML::load_file "settings.yml"
 #os = settings["os"]
@@ -81,11 +82,6 @@ def write_log(string, code)
 	end
 end
 
-# Check UID
-def check_uid(table, uid)
-
-end
-
 # Update product
 def update_product(data)
 
@@ -113,12 +109,45 @@ end
 
 # Update category
 def update_category(data)
-
+	query = "UPDATE #{$db_table} "
+	keys = $this_schema[:FIELDS].keys
+	revmap = $this_map.invert
+	keys.each do |k|
+		p = revmap["#{k}"]
+		type = $this_schema[:FIELDS][:"#{k}"][:type]
+		unless data[:"#{p}"].nil?
+			case type
+			when "INTEGER", "REAL"
+					query << "#{k}="+data[:"#{p}"]+", "
+				else
+					query << "#{k}='"+data[:"#{p}"]+"', "
+			end
+		end
+	end
+	query.slice!(0, query.length-2)
+	query << "WHERE #{keys[0].to_s}=#{values[0]}"
 end
 
 # Insert new category
 def new_category(data)
-
+	values = Array.new
+	keys = $this_schema[:FIELDS].keys
+	revmap = $this_map.invert
+	keys.each do |k|
+		p = revmap["#{k}"]
+		type = $this_schema[:FIELDS][:"#{k}"][:type]
+		case type
+			when "INTEGER"
+				values << data[:"#{p}"].to_i
+			when "REAL"
+				values << data[:"#{p}"].to_f
+			else
+				values << data[:"#{p}"]
+		end
+	end
+	columns = keys.join(",")
+	values = values.join(",")
+	query = "INSERT INTO #{$db_table} (#{columns}) VALUES (#{values})"
 end
 
 # Splits variables from json files
@@ -128,25 +157,58 @@ end
 
 # Builds a hash to map source data for processing
 def build_map(table)
-	x = $map[:"#{table}"][:fields]
 	map_hash = Hash.new
-	x.each do |head,field|
-		unless field==nil
-			map_hash["#{head}"] = "#{field}"
-		end
-	end
+	$map[:"#{table}"][:fields].each { |h,k| map_hash["#{h}"] = "#{k}" unless k==nil }
+	return map_hash
 end
 
+# Check UID
+def uid_exists?(uid)
+	query = ""
+	uid_exists = false
+	if uid.length<2
+		uid.each do |k,v|
+			query << "#{k}=#{v}"
+		end
+	else
+		uid.each do |k,v|
+			query << "#{k}=#{v} "
+		end
+		query.gsub!(" "," AND ")
+	end
+	uid_exists = true if $db.query("SELECT * FROM #{$db_table} WHERE #{query}").count > 0
+	return uid_exists
+end
+
+# Interacts with SQlite database
+def send_to_db(data, key)
+	$db = SQLite3::Database.new "#{$db_file}"
+	# Figure out the uid(s)
+	uid = Hash.new
+	if key.is_a?(Array)
+		key.each do |k|
+			skey = $this_map.key("#{k}")
+			uid["#{k}"] = data[:"#{skey}"]
+		end
+	elsif key.is_a?(String)
+		skey = $this_map.key("#{key}")
+		uid["#{key}"] = data[:"#{skey}"]
+	end
+
+	uid_exists?(uid)
+
+end
 
 
 def parse_csv(file)
 	# Guess what kind of file it is
-	csv_table = guess_table(file)
+	$csv_table = guess_table(file)
 	# Load corresponding schema
-	db_table = $map[:"#{csv_table}"][:table]
-	this_map = build_map(csv_table)
-	schema = $db_schema[:"#{db_table}"]
-	uid = schema[:KEY]
+	$db_table = $map[:"#{$csv_table}"][:table]
+	$this_map = build_map($csv_table)
+	$this_schema = $db_schema[:"#{$db_table}"]
+	key = $this_schema[:KEY]
+	key = key.split("-") if key.match("-")
 
 	# Break it open and go through rows
 	rows = CSV.read(file, :headers => true,:skip_blanks => true,:header_converters => :symbol)
@@ -159,18 +221,19 @@ def parse_csv(file)
 		row.each do |head, field|
 			break if trash==true
 			# What format should this field be?
-			this_format = schema[:"#{head}"][:format]
+			this_format = $this_schema[:"#{head}"][:format]
 			# If there's no format, skip validation and put it in hash
 			# If it validates, put it in the hash
 			if this_format==nil || validate(field, :"#{this_format}") == true
 				sqlite_hash["#{head}"] = "#{field}"
 			else
-				# If it's not valid, put it in the log and move on
+				# If it's not valid, put it in the log and trash this row
 				write_log(field,"30")
+				trash = true
 				break
 			end
 			# Put data in the db
-			puts_to_db(sqlite_hash, db_table)
+			send_to_db(sqlite_hash, key)
 
 		end
 	end
@@ -251,4 +314,17 @@ db.execute( "select * from users" ) # => [["ben", 12], ["sally", 39]]
 =end
 
 # Run the main function
-doit($files)
+#doit($files)
+
+
+
+#Test data
+$file = "data/UniteU_Departments_20150710132002.csv"
+$uid = { "id" => "1234" }
+$csv_table = "departments"
+$db_table = "categories"
+$this_map = build_map($csv_table)
+$this_schema = $db_schema[:"#{$db_table}"]
+$key = $this_schema[:KEY]
+$key = $key.split("-") if $key.match("-")
+$db = SQLite3::Database.new "#{$db_file}"
