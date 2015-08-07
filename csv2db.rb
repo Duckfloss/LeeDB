@@ -8,7 +8,7 @@ require 'csv2db/records'
 
 # Load presets
 $db_file = "lee.db"
-$log = "/logs/"+DateTime.now.strftime('%Y%m%d%H%M%S')+".txt"
+$log = "csv2db/logs/"+DateTime.now.strftime('%Y%m%d%H%M%S')+".txt"
 #settings = YAML::load_file "settings.yml"
 #os = settings["os"]
 
