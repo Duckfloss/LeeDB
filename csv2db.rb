@@ -4,6 +4,7 @@ require 'csv'
 require 'json'
 require 'date'
 require 'csv2db/records'
+require 'csv2db/testdata'
 #require 'yaml'
 
 # Load presets
@@ -315,16 +316,3 @@ db.execute( "select * from users" ) # => [["ben", 12], ["sally", 39]]
 
 # Run the main function
 #doit($files)
-
-
-
-#Test data
-$file = "data/UniteU_Departments_20150710132002.csv"
-$uid = { "id" => "1234" }
-$csv_table = "departments"
-$db_table = "categories"
-$this_map = build_map($csv_table)
-$this_schema = $db_schema[:"#{$db_table}"]
-$key = $this_schema[:KEY]
-$key = $key.split("-") if $key.match("-")
-$db = SQLite3::Database.new "#{$db_file}"
