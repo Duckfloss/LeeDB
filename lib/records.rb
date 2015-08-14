@@ -1,19 +1,19 @@
 
-class category
+class Category
   # Constants
   KEY="id"
+  UNITEUTABLE="departments"
 
   # Constructor
-  def initialize()
-    @db_table_name = "categories"
-    @uniteu_table_name = "departments"
-    @db_column_names = [
-      "id", "name", "parent", "description", "img", "rpro_id", "google_shopping_map"
-    ]
-    @uniteu_column_names => [
-			"parent_id", "dept_id", "dept_name", "dept_description", "dept_image_1_file", "rpro_dept_id"
-    ]
+  def initialize
+    mapfile = JSON.parse(File.read('uniteu_leedb_map.json'), :symbolize_names=>true)
+    @map = mapfile["#{UNITEUTABLE}"]["fields"]
   end
+
+  def getMap
+    @map
+  end
+
 
   # Accessors
   def getDBTableName
@@ -59,7 +59,7 @@ class category
 
 end
 
-class product
+class Product
   # Constructor
   def initialize()
 
@@ -68,7 +68,7 @@ class product
 
 end
 
-class shopper
+class Shopper
   # Constructor
   def initialize()
 
@@ -77,7 +77,7 @@ class shopper
 
 end
 
-class order
+class Order
   # Constructor
   def initialize()
 
