@@ -6,16 +6,16 @@ class Category
 
   # Constructor
   def initialize
-    mapfile = JSON.parse(File.read('uniteu_leedb_map.json'), :symbolize_names=>true)
-    @map = mapfile["#{UNITEUTABLE}"]["fields"]
+    @map = build_map
   end
 
+
+
+  # Accessors
   def getMap
     @map
   end
 
-
-  # Accessors
   def getDBTableName
     @db_table_name
   end
@@ -33,6 +33,14 @@ class Category
   end
 
   # Methods
+  # Builds map
+  def build_map
+    mapfile = JSON.parse(File.read('lib/uniteu_leedb_map.json'), :symbolize_names=>true)
+    map = Hash.new
+  	mapfile[:"#{UNITEUTABLE}"][:fields].each { |h,k| map["#{h}"] = "#{k}" unless k==nil }
+  	return map
+  end
+
   # Puts a row of UniteU data into a hash with database columns as keys
   def getUUData(row)
     data = {

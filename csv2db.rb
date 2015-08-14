@@ -3,13 +3,13 @@ require 'sqlite3'
 require 'csv'
 require 'json'
 require 'date'
-require 'csv2db/records'
-require 'csv2db/testdata'
+require './lib/records.rb'
+require './lib/test_data.rb'
 #require 'yaml'
 
 # Load presets
 $db_file = "lee.db"
-$log = "csv2db/logs/"+DateTime.now.strftime('%Y%m%d%H%M%S')+".txt"
+$log = "logs/"+DateTime.now.strftime('%Y%m%d%H%M%S')+".txt"
 #settings = YAML::load_file "settings.yml"
 #os = settings["os"]
 
@@ -25,9 +25,9 @@ $db_format = [ 'alpha16','char3','price','bool','url','int4','date','time','phon
 $db_rule = [ 'KEY','NOTNULL','UNIQUE' ]
 
 # Load db schema
-$db_schema = JSON.parse(File.read('leedb.json'), :symbolize_names=>true)
+$db_schema = JSON.parse(File.read('./lib/leedb.json'), :symbolize_names=>true)
 # Load db map
-$map = JSON.parse(File.read('uniteu_leedb_map.json'), :symbolize_names=>true)
+$map = JSON.parse(File.read('./lib/uniteu_leedb_map.json'), :symbolize_names=>true)
 
 # Validate field data
 def validate(string, format)
@@ -154,13 +154,6 @@ end
 # Splits variables from json files
 def split_json_variables(string)
 	string.split("-")
-end
-
-# Builds a hash to map source data for processing
-def build_map(table)
-	map_hash = Hash.new
-	$map[:"#{table}"][:fields].each { |h,k| map_hash["#{h}"] = "#{k}" unless k==nil }
-	return map_hash
 end
 
 # Check UID
