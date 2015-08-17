@@ -1,10 +1,11 @@
+$LOAD_PATH << "./lib"
 
 require 'sqlite3'
 require 'csv'
 require 'json'
 require 'date'
-require './lib/records.rb'
-require './lib/test_data.rb'
+require 'records'
+require 'test_data'
 #require 'yaml'
 
 # Load presets
