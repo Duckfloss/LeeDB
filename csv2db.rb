@@ -34,17 +34,17 @@ $map = JSON.parse(File.read('./lib/uniteu_leedb_map.json'), :symbolize_names=>tr
 def validate(string, format)
 	# validation patterns
 	formats = {
-		:file => /\A[\S]+\.csv\Z/,
-		:alpha16 => /\A[a-zA-Z]{16}\Z/,
-		:char3 => /\A[\w\d\ \+\.\&]{2,3}\Z/,
-		:int4 => /\A\d{4}\Z/,
-		:price => /\A[\d\.]+\Z/,
-		:bool => /\A(0|1|no|yes|true|false)\Z/,
-		:url => /\A[\d\w]+\.+[\w]{1,4}\Z/,
-		:date => /\A\d{2}\/\d{2}\/\d{2}\Z/,
-		:time => /\A\d{2}\:\d{2}\:\d{2}\ (A|P)M\Z/,
-		:phone => /\A[\d\-\(\)\.]+\Z/,
-		:email => /\A[\w\d\.\#-\_\~\$\&\'\(\)\*\+\,\;\=\:\%]+\@[\w\d]+\.\w{1,4}\Z/
+		"file" => /\A[\S]+\.csv\Z/,
+		"alpha16" => /\A[a-zA-Z]{16}\Z/,
+		"char3" => /\A[\w\d\ \+\.\&]{2,3}\Z/,
+		"int4" => /\A\d{4}\Z/,
+		"price" => /\A[\d\.]+\Z/,
+		"bool" => /\A(0|1|no|yes|true|false)\Z/,
+		"url" => /\A[\d\w]+\.+[\w]{1,4}\Z/,
+		"date" => /\A\d{2}\/\d{2}\/\d{2}\Z/,
+		"time" => /\A\d{2}\:\d{2}\:\d{2}\ (A|P)M\Z/,
+		"phone" => /\A[\d\-\(\)\.]+\Z/,
+		"email" => /\A[\w\d\.\#-\_\~\$\&\'\(\)\*\+\,\;\=\:\%]+\@[\w\d]+\.\w{1,4}\Z/
 	}
 	format = formats[:"#{format}"]
 	!string[format].nil?
@@ -200,15 +200,25 @@ def parse_csv(file)
 
 	# Break it open and go through rows
 	rows = CSV.read(file, :headers => true,:skip_blanks => true,:header_converters => :symbol)
+	# To count rows
+	rowno = 1
 	rows.each do |row|
 		# Variable switch will tell us if this row is trash
-		trash = false
+#		trash = false
+		rowno += 1 # Iterate row
 		# Creates record object
 		$record = create_record($db_table,row)
 		# Makes hash of record attributes
 		$this_row = $record.getAttributes unless $record == "unknown"
-
-
+		$this_row.each do |k,v|
+			# Validate each field
+			# Derive format for field
+			format = $this_schema[:FIELDS][:"#{k}"][:format]
+			if format!=nil && validate(field, format)!=true
+				error="#{file}::#{rowno}::#{k}/#{v}"
+				write_log(error,"30")
+			end
+			
 
 =begin This stuff is junk
 		# Go through each row's fields
