@@ -91,7 +91,7 @@ class ProductItem
   end
 end
 
-class Shopper
+class Customer
   include Record
 
   # Constants
