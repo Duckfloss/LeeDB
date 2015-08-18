@@ -45,19 +45,18 @@ class Category
   def getAttributes
     @attributes
   end
-
 end
 
-class Product
+class ProductGroup
   include Record
 
   # Constants
-  KEY="id"
-  UNITEUTABLE="departments"
+  KEY="pf_id"
 
   # Constructor
-  def initialize()
-    @map = Record.build_map(UNITEUTABLE)
+  def initialize(data)
+    @map = Record.build_map("products")
+    @attributes = Record.build_attributes("product_groups",data,@map)
   end
 
   # Accessors
@@ -65,7 +64,31 @@ class Product
     @map
   end
 
+  def getAttributes
+    @attributes
+  end
+end
 
+class ProductItem
+  include Record
+
+  # Constants
+  KEY="sku"
+
+  # Constructor
+  def initialize(data)
+    @map = Record.build_map("variants")
+    @attributes = Record.build_attributes("product_items",data,@map)
+  end
+
+  # Accessors
+  def getMap
+    @map
+  end
+
+  def getAttributes
+    @attributes
+  end
 end
 
 class Shopper
@@ -73,11 +96,11 @@ class Shopper
 
   # Constants
   KEY="id"
-  UNITEUTABLE="departments"
 
   # Constructor
-  def initialize()
-    @map = Record.build_map(UNITEUTABLE)
+  def initialize(data)
+    @map = Record.build_map("shoppers")
+    @attributes = Record.build_attributes("customers",data,@map)
   end
 
   # Accessors
@@ -85,6 +108,9 @@ class Shopper
     @map
   end
 
+  def getAttributes
+    @attributes
+  end
 end
 
 class Order
@@ -92,11 +118,11 @@ class Order
 
   # Constants
   KEY="id"
-  UNITEUTABLE="departments"
 
   # Constructor
-  def initialize()
-    @map = Record.build_map(UNITEUTABLE)
+  def initialize(data)
+    @map = Record.build_map("salesorders")
+    @attributes = Record.build_attributes("orders",data,@map)
   end
 
   # Accessors
@@ -104,4 +130,29 @@ class Order
     @map
   end
 
+  def getAttributes
+    @attributes
+  end
+end
+
+class OrderItem
+  include Record
+
+  # Constants
+  KEY="order_id-sku"
+
+  # Constructor
+  def initialize(data)
+    @map = Record.build_map("salesorderssubitems")
+    @attributes = Record.build_attributes("order_items",data,@map)
+  end
+
+  # Accessors
+  def getMap
+    @map
+  end
+
+  def getAttributes
+    @attributes
+  end
 end
