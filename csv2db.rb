@@ -79,31 +79,6 @@ def write_log(string, code)
 	end
 end
 
-# Update product
-def update_product(data)
-
-end
-
-# Insert new product
-def new_product(data)
-
-end
-
-# Update customer
-def update_customer(data)
-
-end
-
-# Insert new customer
-def new_customer(data)
-
-end
-
-# Insert new order
-def new_order(data)
-
-end
-
 # Update category
 def update_category(data)
 	query = "UPDATE #{$db_table} "
