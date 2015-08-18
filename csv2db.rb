@@ -174,6 +174,19 @@ def build_map(table)
 	return this_map
 end
 
+# Chooses and creates Record
+def create_record(table,data)
+	record = case table
+		when "product_items" then ProductItem.new(data)
+		when "product_groups" then ProductGroup.new(data)
+		when "orders" then Order.new(data)
+		when "order_items" then OrderItem.new(data)
+		when "customers" then Customer.new(data)
+		when "categories" then Category.new(data)
+		else "unknown"
+	end
+end
+
 
 def parse_csv(file)
 	# Guess what kind of file it is
@@ -190,8 +203,14 @@ def parse_csv(file)
 	rows.each do |row|
 		# Variable switch will tell us if this row is trash
 		trash = false
-		# Create hash for holding this row's data intended for db
-		sqlite_hash = Hash.new
+		# Creates record object
+		$record = create_record($db_table,row)
+		# Makes hash of record attributes
+		$this_row = $record.getAttributes unless $record == "unknown"
+
+
+
+=begin This stuff is junk
 		# Go through each row's fields
 		row.each do |head, field|
 			break if trash==true
@@ -211,6 +230,8 @@ def parse_csv(file)
 			send_to_db(sqlite_hash, key)
 
 		end
+=end
+
 	end
 end
 
