@@ -164,9 +164,14 @@ def send_to_db(data, key)
 		skey = $this_map.key("#{key}")
 		uid["#{key}"] = data[:"#{skey}"]
 	end
-
 	uid_exists?(uid)
+end
 
+# Builds map
+def build_map(table)
+  this_map = Hash.new
+	$map[:"#{table}"][:fields].each { |k,v| this_map["#{k}"] = "#{v}" unless v==nil }
+	return this_map
 end
 
 
