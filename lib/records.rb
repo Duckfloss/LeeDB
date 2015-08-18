@@ -30,11 +30,12 @@ class Category
 
   # Constants
   KEY="id"
+  TABLE="categories"
 
   # Constructor
   def initialize(data)
     @map = Record.build_map("departments")
-    @attributes = Record.build_attributes("categories",data,@map)
+    @attributes = Record.build_attributes(TABLE,data,@map)
     @uid = { "#{KEY}" => @attributes[:"#{KEY}"] }
   end
 
@@ -57,11 +58,12 @@ class ProductGroup
 
   # Constants
   KEY="pf_id"
+  TABLE="product_groups"
 
   # Constructor
   def initialize(data)
     @map = Record.build_map("products")
-    @attributes = Record.build_attributes("product_groups",data,@map)
+    @attributes = Record.build_attributes(TABLE,data,@map)
     @uid = { "#{KEY}" => @attributes[:"#{KEY}"] }
   end
 
@@ -84,11 +86,12 @@ class ProductItem
 
   # Constants
   KEY="sku"
+  TABLE="product_items"
 
   # Constructor
   def initialize(data)
     @map = Record.build_map("variants")
-    @attributes = Record.build_attributes("product_items",data,@map)
+    @attributes = Record.build_attributes(TABLE,data,@map)
     @uid = { "#{KEY}" => @attributes[:"#{KEY}"] }
   end
 
@@ -111,11 +114,12 @@ class Customer
 
   # Constants
   KEY="id"
+  TABLE="customers"
 
   # Constructor
   def initialize(data)
     @map = Record.build_map("shoppers")
-    @attributes = Record.build_attributes("customers",data,@map)
+    @attributes = Record.build_attributes(TABLE,data,@map)
     @uid = { "#{KEY}" => @attributes[:"#{KEY}"] }
   end
 
@@ -138,11 +142,12 @@ class Order
 
   # Constants
   KEY="id"
+  TABLE="orders"
 
   # Constructor
   def initialize(data)
     @map = Record.build_map("salesorders")
-    @attributes = Record.build_attributes("orders",data,@map)
+    @attributes = Record.build_attributes(TABLE,data,@map)
     @uid = { "#{KEY}" => @attributes[:"#{KEY}"] }
   end
 
@@ -165,11 +170,12 @@ class OrderItem
 
   # Constants
   KEY=["id","sku"]
+  TABLE = "order_items"
 
   # Constructor
   def initialize(data)
     @map = Record.build_map("salesorderssubitems")
-    @attributes = Record.build_attributes("order_items",data,@map)
+    @attributes = Record.build_attributes(TABLE,data,@map)
     @uid = Hash.new
     KEY.each do |i|
       @uid["#{i}"] = @attributes[:"#{i}"]
