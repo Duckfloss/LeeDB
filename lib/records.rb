@@ -35,6 +35,7 @@ class Category
   def initialize(data)
     @map = Record.build_map("departments")
     @attributes = Record.build_attributes("categories",data,@map)
+    @uid = { "#{KEY}" => @attributes[:"#{KEY}"] }
   end
 
   # Accessors
@@ -44,6 +45,10 @@ class Category
 
   def getAttributes
     @attributes
+  end
+
+  def getUID
+    @uid
   end
 end
 
@@ -57,6 +62,7 @@ class ProductGroup
   def initialize(data)
     @map = Record.build_map("products")
     @attributes = Record.build_attributes("product_groups",data,@map)
+    @uid = { "#{KEY}" => @attributes[:"#{KEY}"] }
   end
 
   # Accessors
@@ -66,6 +72,10 @@ class ProductGroup
 
   def getAttributes
     @attributes
+  end
+
+  def getUID
+    @uid
   end
 end
 
@@ -79,6 +89,7 @@ class ProductItem
   def initialize(data)
     @map = Record.build_map("variants")
     @attributes = Record.build_attributes("product_items",data,@map)
+    @uid = { "#{KEY}" => @attributes[:"#{KEY}"] }
   end
 
   # Accessors
@@ -88,6 +99,10 @@ class ProductItem
 
   def getAttributes
     @attributes
+  end
+
+  def getUID
+    @uid
   end
 end
 
@@ -101,6 +116,7 @@ class Customer
   def initialize(data)
     @map = Record.build_map("shoppers")
     @attributes = Record.build_attributes("customers",data,@map)
+    @uid = { "#{KEY}" => @attributes[:"#{KEY}"] }
   end
 
   # Accessors
@@ -110,6 +126,10 @@ class Customer
 
   def getAttributes
     @attributes
+  end
+
+  def getUID
+    @uid
   end
 end
 
@@ -123,6 +143,7 @@ class Order
   def initialize(data)
     @map = Record.build_map("salesorders")
     @attributes = Record.build_attributes("orders",data,@map)
+    @uid = { "#{KEY}" => @attributes[:"#{KEY}"] }
   end
 
   # Accessors
@@ -132,6 +153,10 @@ class Order
 
   def getAttributes
     @attributes
+  end
+
+  def getUID
+    @uid
   end
 end
 
@@ -139,12 +164,16 @@ class OrderItem
   include Record
 
   # Constants
-  KEY="order_id-sku"
+  KEY=["id","sku"]
 
   # Constructor
   def initialize(data)
     @map = Record.build_map("salesorderssubitems")
     @attributes = Record.build_attributes("order_items",data,@map)
+    @uid = Hash.new
+    KEY.each do |i|
+      @uid["#{i}"] = @attributes[:"#{i}"]
+    end
   end
 
   # Accessors
@@ -154,5 +183,9 @@ class OrderItem
 
   def getAttributes
     @attributes
+  end
+
+  def getUID
+    @uid
   end
 end
