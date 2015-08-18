@@ -373,9 +373,9 @@
 		}
 	},
 	"order_items": {
-		"KEY": "order_id-sku",
+		"KEY": "id-sku",
 		"FIELDS": {
-			"order_id": {
+			"id": {
 				"type": "INTEGER",
 				"rules": "(KEY-NOTNULL)",
 				"format": null,
