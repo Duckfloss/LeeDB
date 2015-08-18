@@ -25,11 +25,6 @@ $db_type = [ 'TEXT','REAL','INTEGER' ]
 $db_format = [ 'alpha16','char3','price','bool','url','int4','date','time','phone','email' ]
 $db_rule = [ 'KEY','NOTNULL','UNIQUE' ]
 
-# Load db schema
-$db_schema = JSON.parse(File.read('./lib/leedb.json'), :symbolize_names=>true)
-# Load db map
-$map = JSON.parse(File.read('./lib/uniteu_leedb_map.json'), :symbolize_names=>true)
-
 # Validate field data
 def validate(string, format)
 	# validation patterns
