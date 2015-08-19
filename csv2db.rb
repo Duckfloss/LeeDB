@@ -50,6 +50,18 @@ def validate(string, format)
 	!string[format].nil?
 end
 
+def convert_type(field,type)
+	case type
+	when "REAL" then return field.to_f
+	when "INTEGER" then return field.to_i
+	when "TEXT" then return "\"#{field}\""
+	end
+end
+
+def sanitize(string)
+	string.gsub!(/([\'\"])/) {|s| '\\'+s}
+end
+
 # Try to guess which table we're working on here
 def guess_table(file)
 	file.downcase!
@@ -127,44 +139,36 @@ def new_category(data)
 	query = "INSERT INTO #{$db_table} (#{columns}) VALUES (#{values})"
 end
 
-# Splits variables from json files
-def split_json_variables(string)
-	string.split("-")
-end
-
 # Check UID
 def uid_exists?(uid)
 	query = ""
 	uid_exists = false
-	if uid.length<2
-		uid.each do |k,v|
-			query << "#{k}=#{v}"
-		end
-	else
-		uid.each do |k,v|
-			query << "#{k}=#{v} "
-		end
-		query.gsub!(" "," AND ")
+	uid.each do |k,v|
+		query << "#{k}=#{v},"
 	end
+	query.chomp!(",")
+	query.gsub!(","," AND ")
 	uid_exists = true if $db.query("SELECT * FROM #{$db_table} WHERE #{query}").count > 0
 	return uid_exists
 end
 
 # Interacts with SQlite database
-def send_to_db(data, key)
+def send_to_db(record)
 	$db = SQLite3::Database.new "#{$db_file}"
-	# Figure out the uid(s)
-	uid = Hash.new
-	if key.is_a?(Array)
-		key.each do |k|
-			skey = $this_map.key("#{k}")
-			uid["#{k}"] = data[:"#{skey}"]
+	# Check if record exists in db
+	if uid_exists?(record.getUID) != true
+		keys = ""
+		values = ""
+		record.getAttributes.each do |k,v|
+			keys << "#{k},"
+			values << "#{v},"
 		end
-	elsif key.is_a?(String)
-		skey = $this_map.key("#{key}")
-		uid["#{key}"] = data[:"#{skey}"]
+		keys.chomp!(",")
+		values.chomp!(",")
+
+		query = $db.prepare "INSERT INTO #{$db_table} (#{keys}) VALUES (#{values})"
+		query.execute
 	end
-	uid_exists?(uid)
 end
 
 # Builds map
@@ -207,41 +211,18 @@ def parse_csv(file)
 #		trash = false
 		rowno += 1 # Iterate row
 		# Creates record object
-		$record = create_record($db_table,row)
-		# Makes hash of record attributes
-		$this_row = $record.getAttributes unless $record == "unknown"
-		$this_row.each do |k,v|
+		record = create_record($db_table,row)
+		# Gets record attributes
+		this_row = record.getAttributes unless record == "unknown"
+		this_row.each do |k,v|
 			# Validate each field
-			# Derive format for field
 			format = $this_schema[:FIELDS][:"#{k}"][:format]
-			if format!=nil && validate(field, format)!=true
+			if format!=nil && validate(v, format)!=true
 				error="#{file}::#{rowno}::#{k}/#{v}"
 				write_log(error,"30")
 			end
-			
-
-=begin This stuff is junk
-		# Go through each row's fields
-		row.each do |head, field|
-			break if trash==true
-			# What format should this field be?
-			this_format = $this_schema[:"#{head}"][:format]
-			# If there's no format, skip validation and put it in hash
-			# If it validates, put it in the hash
-			if this_format==nil || validate(field, :"#{this_format}") == true
-				sqlite_hash["#{head}"] = "#{field}"
-			else
-				# If it's not valid, put it in the log and trash this row
-				write_log(field,"30")
-				trash = true
-				break
-			end
-			# Put data in the db
-			send_to_db(sqlite_hash, key)
-
 		end
-=end
-
+		send_to_db(record)
 	end
 end
 
