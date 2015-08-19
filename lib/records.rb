@@ -18,7 +18,12 @@ module Record
     attributes = Hash.new
     DB_SCHEMA[:"#{table}"][:FIELDS].each_key do |k|
       this_map = map.invert["#{k}"]
-      attributes[:"#{k}"] = data[:"#{this_map}"]
+      type = DB_SCHEMA[:"#{table}"][:FIELDS][:"#{k}"][:type]
+    	case type
+      	when "REAL" then attributes[:"#{k}"] = data[:"#{this_map}"].to_f
+      	when "INTEGER" then attributes[:"#{k}"] = data[:"#{this_map}"].to_i
+      	when "TEXT" then attributes[:"#{k}"] = "\""+data[:"#{this_map}"]+"\"" unless data[:"#{this_map}"] == nil
+    	end
     end
     return attributes
   end
