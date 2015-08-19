@@ -3,6 +3,7 @@ $file = "data/UniteU_Departments_20150710132002.csv"
 $uid = { "id"	=> "1234" }
 $csv_table = "departments"
 $db_table = "categories"
+$this_schema = {:KEY=>"id", :FIELDS=>{:id=>{:type=>"INTEGER", :rules=>"(KEY-NOTNULL-UNIQUE)", :format=>"int4", :default=>nil}, :name=>{:type=>"TEXT", :rules=>"(NOTNULL)", :format=>nil, :default=>nil}, :parent=>{:type=>"INTEGER", :rules=>nil, :format=>"int4", :default=>nil}, :description=>{:type=>"TEXT", :rules=>nil, :format=>nil, :default=>nil}, :img=>{:type=>"TEXT", :rules=>nil, :format=>"url", :default=>nil}, :rpro_id=>{:type=>"TEXT", :rules=>"(UNIQUE)", :format=>"alpha16", :default=>nil}, :google_shopping_map=>{:type=>"TEXT", :rules=>nil, :format=>nil, :default=>nil}}}
 $category = {
   parent_id:"3011",
   dept_id:"3041",
