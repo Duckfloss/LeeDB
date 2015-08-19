@@ -101,7 +101,7 @@ end
 def send_to_db(record)
 	$db = SQLite3::Database.new "#{$db_file}"
 	# Check if record exists in db
-	if uid_exists?(record.getUID) != true
+	if !uid_exists?(record.getUID)
 		keys = ""
 		values = ""
 		record.getAttributes.each do |k,v|
@@ -110,10 +110,22 @@ def send_to_db(record)
 		end
 		keys.chomp!(",")
 		values.chomp!(",")
-
 		query = $db.prepare "INSERT INTO #{$db_table} (#{keys}) VALUES (#{values})"
-		query.execute
+	else
+		uid = ""
+		values = ""
+		record.getAttributes.each do |k,v|
+			values << "#{k}=#{v}, "
+		end
+		values.chomp!(", ")
+		record.getUID.each do |k,v|
+			uid << "#{k}=#{v},"
+		end
+		uid.chomp!(",")
+		uid.gsub!(","," AND ")
+		query = $db.prepare "UPDATE #{$db_table} SET #{values} WHERE #{uid}"
 	end
+	query.execute
 end
 
 # Builds map
