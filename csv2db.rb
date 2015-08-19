@@ -50,18 +50,6 @@ def validate(string, format)
 	!string[format].nil?
 end
 
-def convert_type(field,type)
-	case type
-	when "REAL" then return field.to_f
-	when "INTEGER" then return field.to_i
-	when "TEXT" then return "\"#{field}\""
-	end
-end
-
-def sanitize(string)
-	string.gsub!(/([\'\"])/) {|s| '\\'+s}
-end
-
 # Try to guess which table we're working on here
 def guess_table(file)
 	file.downcase!
@@ -94,49 +82,6 @@ def write_log(string, code)
 	File.open($log, 'a') do |log|
 		log.puts "#{error_msg}\n"
 	end
-end
-
-# Update category
-def update_category(data)
-	query = "UPDATE #{$db_table} "
-	keys = $this_schema[:FIELDS].keys
-	revmap = $this_map.invert
-	keys.each do |k|
-		p = revmap["#{k}"]
-		type = $this_schema[:FIELDS][:"#{k}"][:type]
-		unless data[:"#{p}"].nil?
-			case type
-			when "INTEGER", "REAL"
-					query << "#{k}="+data[:"#{p}"]+", "
-				else
-					query << "#{k}='"+data[:"#{p}"]+"', "
-			end
-		end
-	end
-	query.slice!(0, query.length-2)
-	query << "WHERE #{keys[0].to_s}=#{values[0]}"
-end
-
-# Insert new category
-def new_category(data)
-	values = Array.new
-	keys = $this_schema[:FIELDS].keys
-	revmap = $this_map.invert
-	keys.each do |k|
-		p = revmap["#{k}"]
-		type = $this_schema[:FIELDS][:"#{k}"][:type]
-		case type
-			when "INTEGER"
-				values << data[:"#{p}"].to_i
-			when "REAL"
-				values << data[:"#{p}"].to_f
-			else
-				values << data[:"#{p}"]
-		end
-	end
-	columns = keys.join(",")
-	values = values.join(",")
-	query = "INSERT INTO #{$db_table} (#{columns}) VALUES (#{values})"
 end
 
 # Check UID
@@ -241,64 +186,6 @@ def doit(files)
 	end
 end
 
-
-
-
-
-
-=begin
-
-def something()
-	table = guess_table(file)
-
-	# Open CSV file
-	data = CSV.read(file, :headers => true,:skip_blanks => true,:header_converters => :symbol)
-
-	data.each do |row|
-		uid = db_schema[:"#{table}"]["KEY"]
-		if check_uid(table, uid)
-	end
-
-	# open a new file
-	File.open(csv_target, 'a') do |file|
-		data.each do |row|
-			if row[:desc] != nil
-				row.each do |head,field|
-					if head == :desc
-						row[:desc] = formatify(field)
-					end
-				end
-				file.puts row
-			else
-				file.puts row
-			end
-		end
-	end
-end
-
-
-db = SQLite3::Database.new ":memory:"
-
-# Create a database
-rows = db.execute <<-SQL
-  create table users (
-    name varchar(30),
-    age int
-  );
-SQL
-
-csv = <<CSV
-name,age
-ben,12
-sally,39
-CSV
-
-CSV.parse(csv, headers: true) do |row|
-  db.execute "insert into users values ( ?, ? )", row.fields # equivalent to: [row['name'], row['age']]
-end
-
-db.execute( "select * from users" ) # => [["ben", 12], ["sally", 39]]
-=end
 
 # Run the main function
 #doit($files)
