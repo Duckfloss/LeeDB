@@ -90,14 +90,18 @@ end
 
 # Check UID
 def uid_exists?(uid)
-	query = ""
 	uid_exists = false
+	values = []
+	q = "SELECT * FROM #{$db_table} WHERE"
 	uid.each do |k,v|
-		query << "#{k}=#{v},"
+		q << " #{k}=?,"
+		values << v
 	end
-	query.chomp!(",")
-	query.gsub!(","," AND ")
-	uid_exists = true if $db.query("SELECT * FROM #{$db_table} WHERE #{query}").count > 0
+	q.chomp!(",")
+	q.gsub!(","," AND ")
+	query = $db.prepare "#{q}"
+	query.bind_params(values)
+	uid_exists = true if query.execute.count > 0
 	return uid_exists
 end
 
@@ -134,6 +138,7 @@ def send_to_db(record)
 			values << v
 		end
 		q.chomp!(",")
+		q.gsub!(","," AND ")
 		query = $db.prepare "#{q}"
 		query.bind_params(values)
 	end
