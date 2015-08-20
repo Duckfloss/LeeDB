@@ -46,8 +46,12 @@ def validate(string, format)
 		"phone" => /\A[\d\-\(\)\.]+\Z/,
 		"email" => /\A[\w\d\.\#-\_\~\$\&\'\(\)\*\+\,\;\=\:\%]+\@[\w\d]+\.\w{1,4}\Z/
 	}
-	format = formats[:"#{format}"]
-	!string[format].nil?
+	if string == " " || string == nil
+		return false
+	else
+		format = formats["#{format}"]
+		return !string.to_s[format].nil?
+	end
 end
 
 # Try to guess which table we're working on here
@@ -99,31 +103,39 @@ end
 
 # Interacts with SQlite database
 def send_to_db(record)
-	$db = SQLite3::Database.new "#{$db_file}"
 	# Check if record exists in db
 	if !uid_exists?(record.getUID)
 		keys = ""
-		values = ""
+		values = []
 		record.getAttributes.each do |k,v|
 			keys << "#{k},"
-			values << "#{v},"
+			values << v
 		end
 		keys.chomp!(",")
-		values.chomp!(",")
-		query = $db.prepare "INSERT INTO #{$db_table} (#{keys}) VALUES (#{values})"
+		q = "INSERT INTO #{$db_table} (#{keys}) VALUES ("
+		values.each { q << "?," }
+		q.chomp!(",")
+		q << ")"
+		query = $db.prepare "#{q}"
+		query.bind_params(values)
 	else
-		uid = ""
-		values = ""
+		keys = []
+		values = []
 		record.getAttributes.each do |k,v|
-			values << "#{k}=#{v}, "
+			keys << k.to_s
+			values << v
 		end
-		values.chomp!(", ")
+		q = "UPDATE #{$db_table} SET"
+		keys.each { |key| q << " #{key}=?," }
+		q.chomp!(",")
+		q << " WHERE"
 		record.getUID.each do |k,v|
-			uid << "#{k}=#{v},"
+			q << " #{k}=?,"
+			values << v
 		end
-		uid.chomp!(",")
-		uid.gsub!(","," AND ")
-		query = $db.prepare "UPDATE #{$db_table} SET #{values} WHERE #{uid}"
+		q.chomp!(",")
+		query = $db.prepare "#{q}"
+		query.bind_params(values)
 	end
 	query.execute
 end
@@ -161,26 +173,34 @@ def parse_csv(file)
 
 	# Break it open and go through rows
 	rows = CSV.read(file, :headers => true,:skip_blanks => true,:header_converters => :symbol)
+
+	# Open database
+	$db = SQLite3::Database.new "#{$db_file}"
+
 	# To count rows
 	rowno = 1
 	rows.each do |row|
 		# Variable switch will tell us if this row is trash
 #		trash = false
 		rowno += 1 # Iterate row
+		puts "#{rowno}..."
 		# Creates record object
 		record = create_record($db_table,row)
 		# Gets record attributes
-		this_row = record.getAttributes unless record == "unknown"
-		this_row.each do |k,v|
+#		fields = record.getAttributes unless record == "unknown"
+#		fields.each do |k,v|
 			# Validate each field
-			format = $this_schema[:FIELDS][:"#{k}"][:format]
-			if format!=nil && validate(v, format)!=true
-				error="#{file}::#{rowno}::#{k}/#{v}"
-				write_log(error,"30")
-			end
-		end
+#			format = $this_schema[:FIELDS][:"#{k}"][:format]
+#			if format!=nil && validate(v, format)!=true
+#				error="#{file}::#{rowno}::#{k}/#{v}"
+#				write_log(error,"30")
+#			end
+#		end
 		send_to_db(record)
 	end
+
+#ensure
+#	$db.close if $db
 end
 
 
