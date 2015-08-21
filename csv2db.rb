@@ -182,6 +182,7 @@ end
 
 
 def parse_csv(file)
+	puts "file" # REMOVE THIS <<<<<<<<
 	# Guess what kind of file it is
 	$csv_table = guess_table(file)
 	# Load corresponding schema
@@ -203,7 +204,7 @@ def parse_csv(file)
 		# Variable switch will tell us if this row is trash
 #		trash = false
 		rowno += 1 # Iterate row
-		puts "#{rowno}..."
+		puts "#{rowno}..." # REMOVE THIS <<<<<<<<
 		# Creates record object
 		record = create_record($db_table,row)
 		# Gets record attributes
