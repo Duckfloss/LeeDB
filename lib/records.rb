@@ -74,6 +74,7 @@ class ProductGroup
     @map = Record.build_map("products")
     @attributes = Record.build_attributes(TABLE,data,@map)
     @uid = { "#{KEY}" => @attributes[:"#{KEY}"] }
+    @cat = [ @attributes.delete(:dept_id), @attributes[:pf_id] ]
   end
 
   # Accessors
@@ -87,6 +88,10 @@ class ProductGroup
 
   def getUID
     @uid
+  end
+
+  def getCat
+    @cat
   end
 end
 

@@ -103,6 +103,12 @@
 	"product_groups": {
 		"KEY": "pf_id",
 		"FIELDS": {
+			"dept_id": {
+				"type": "INTEGER",
+				"rules": "(NOTNULL)",
+				"format": "int4",
+				"default": null
+			},
 			"pf_id": {
 				"type": "TEXT",
 				"rules": "(KEY-NOTNULL-UNIQUE)",

@@ -88,7 +88,7 @@ def write_log(string, code)
 	end
 end
 
-# Check UID
+# Check if UID exists
 def uid_exists?(uid)
 	uid_exists = false
 	values = []
@@ -144,6 +144,19 @@ def send_to_db(record)
 		query.bind_params(values)
 	end
 	query.execute
+end
+
+# Specifically updates product_meta table
+def send_cat_to_db(cat)
+	# Check if it exists already
+	find = $db.prepare "SELECT * FROM product_meta WHERE category_id=? AND pf_id=?"
+	find.bind_params(cat)
+	# And if it doesn't exist, insert it
+	if find.execute.count < 1
+		query = $db.prepare "INSERT INTO product_meta (category_id, pf_id) VALUES (?,?)"
+		query.bind_params(cat)
+		query.execute
+	end
 end
 
 # Builds map
@@ -202,7 +215,15 @@ def parse_csv(file)
 #				write_log(error,"30")
 #			end
 #		end
-		send_to_db(record)
+
+		# This just splits out "product_groups" so we can categorize
+		# in another table
+		if $db_table!="product_groups"
+			send_to_db(record)
+		else
+			send_to_db(record)
+			send_cat_to_db(record.getCat)
+		end
 	end
 
 #ensure
