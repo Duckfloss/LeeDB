@@ -126,6 +126,15 @@ def send_to_db(record)
 	else # If it does exist, then we are updating it
 		keys = []
 		values = []
+		where = ""
+		wherev = []
+		record.getUID.each do |k,v|
+			record.getAttributes.delete(:"#{k}")
+			where << " #{k}=?,"
+			wherev << v
+		end
+		where.chomp!(",")
+		where.gsub!(","," AND ")
 		record.getAttributes.each do |k,v|
 			keys << k.to_s
 			values << v
@@ -133,13 +142,8 @@ def send_to_db(record)
 		q = "UPDATE #{$db_table} SET"
 		keys.each { |key| q << " #{key}=?," }
 		q.chomp!(",")
-		q << " WHERE"
-		record.getUID.each do |k,v|
-			q << " #{k}=?,"
-			values << v
-		end
-		q.chomp!(",")
-		q.gsub!(","," AND ")
+		q << " WHERE #{where}"
+		wherev.map { |v| values << v }
 		query = $db.prepare "#{q}"
 		query.bind_params(values)
 	end
