@@ -108,6 +108,7 @@ end
 # Interacts with SQlite database
 def send_to_db(record)
 	# Check if record exists in db
+	# If not, insert it
 	if !uid_exists?(record.getUID)
 		keys = ""
 		values = []
@@ -122,7 +123,7 @@ def send_to_db(record)
 		q << ")"
 		query = $db.prepare "#{q}"
 		query.bind_params(values)
-	else
+	else # If it does exist, then we are updating it
 		keys = []
 		values = []
 		record.getAttributes.each do |k,v|
