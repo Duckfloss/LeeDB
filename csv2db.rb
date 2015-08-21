@@ -223,7 +223,9 @@ def parse_csv(file)
 			send_to_db(record)
 		else
 			send_to_db(record)
-			send_cat_to_db(record.getCat)
+			if !record.getCat[0].nil?
+				send_cat_to_db(record.getCat)
+			end
 		end
 	end
 
