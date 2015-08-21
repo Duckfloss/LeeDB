@@ -6,13 +6,10 @@ require 'json'
 require 'date'
 require 'records'
 require 'test_data'
-#require 'yaml'
 
 # Load presets
 $db_file = "lee.db"
 $log = "logs/"+DateTime.now.strftime('%Y%m%d%H%M%S')+".txt"
-#settings = YAML::load_file "settings.yml"
-#os = settings["os"]
 
 # Load commandline files to import
 $files = []
