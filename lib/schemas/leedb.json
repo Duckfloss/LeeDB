@@ -17,7 +17,8 @@
 			"backorder": { "type": "INTEGER", "rules": null, "format": null, "default": "0" },
 			"inventory_level": { "type": "INTEGER", "rules": null, "format": null, "default": "0" },
 			"order_code": { "type": "TEXT", "rules": null, "format": null, "default": null },
-			"img_large": { "type": "TEXT", "rules": null, "format": "url", "default": null }
+			"img_large": { "type": "TEXT", "rules": null, "format": "url", "default": null },
+			"google_shopping": { "type": "INTEGER", "rules": null, "format": "bool", "default": null }
 		}
 	},
 	"product_groups": {
@@ -38,7 +39,7 @@
 			"attr_label2": { "type": "TEXT", "rules": null, "format": null, "default": null },
 			"attr_label3": { "type": "TEXT", "rules": null, "format": null, "default": null },
 			"attr_label4": { "type": "TEXT", "rules": null, "format": null, "default": null },
-			"google_shopping": { "type": "INTEGER", "rules": null, "format": "int4", "default": null }
+			"google_shopping": { "type": "INTEGER", "rules": null, "format": "bool", "default": null }
 		}
 	},
 	"product_meta": {
@@ -125,6 +126,36 @@
 			"tracking_id": { "type": "TEXT", "rules": "(NOTNULL-UNIQUE)", "format": null, "default": null },
 			"carrier": { "type": "TEXT", "rules": "(NOTNULL)", "format": null, "default": null },
 			"ship_date": { "type": "TEXT", "rules": "(NOTNULL)", "format": null, "default": null }
+		}
+	},
+	"google_shopping": {
+		"KEY": "id",
+		"FIELDS": {
+			"id": { "type": "TEXT", "rules": "(KEY-NOTNULL-UNIQUE)", "format": null, "default": null },
+			"title": { "type": "TEXT", "rules": "(NOTNULL)", "format": null, "default": null },
+			"description": { "type": "TEXT", "rules": "(NOTNULL)", "format": null, "default": null },
+			"google_product_category": { "type": "TEXT", "rules": "(NOTNULL)", "format": null, "default": null },
+			"product_type": { "type": "TEXT", "rules": null, "format": null, "default": null },
+			"link": { "type": "TEXT", "rules": "(NOTNULL)", "format": null, "default": null },
+			"image_link": { "type": "TEXT", "rules": "(NOTNULL)", "format": null, "default": null },
+			"condition": { "type": "TEXT", "rules": "(NOTNULL)", "format": null, "default": "new" },
+			"availability": { "type": "TEXT", "rules": "(NOTNULL)", "format": null, "default": "in stock" },
+			"price": { "type": "REAL", "rules": "(NOTNULL)", "format": null, "default": null },
+			"sale_price": { "type": "REAL", "rules": null, "format": null, "default": null },
+			"sale_price_effective_date": { "type": "TEXT", "rules": null, "format": null, "default": null },
+			"brand": { "type": "TEXT", "rules": "(NOTNULL)", "format": null, "default": null },
+			"gtin": { "type": "INTEGER", "rules": "(NOTNULL)", "format": "int13", "default": null },
+			"mpn": { "type": "TEXT", "rules": null, "format": null, "default": null },
+			"item_group_id": { "type": "TEXT", "rules": "(NOTNULL)", "format": "alpha16", "default": null },
+			"color": { "type": "TEXT", "rules": null, "format": null, "default": null },
+			"material": { "type": "TEXT", "rules": null, "format": null, "default": null },
+			"pattern": { "type": "TEXT", "rules": null, "format": null, "default": null },
+			"size": { "type": "TEXT", "rules": null, "format": null, "default": null },
+			"gender": { "type": "TEXT", "rules": null, "format": null, "default": null },
+			"age_group": { "type": "TEXT", "rules": null, "format": null, "default": null },
+			"tax": { "type": "TEXT", "rules": null, "format": null, "default": null },
+			"shipping": { "type": "TEXT", "rules": null, "format": null, "default": null },
+			"shipping_weight": { "type": "TEXT", "rules": null, "format": null, "default": null }
 		}
 	}
 }
