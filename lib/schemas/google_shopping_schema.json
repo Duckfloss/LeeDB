@@ -1,0 +1,102 @@
+{
+	"id": {
+			"required": 1,
+			"default": null
+		},
+	"title": {
+			"required": 1,
+			"default": null
+		},
+	"description": {
+			"required": 1,
+			"default": null
+		},
+	"google_product_category": {
+			"required": 1,
+			"default": null
+		},
+	"product_type": {
+			"required": 0,
+			"default": null
+		},
+	"link": {
+			"required": 1,
+			"default": null
+		},
+	"image_link": {
+			"required": 1,
+			"default": null
+		},
+	"condition": {
+			"required": 1,
+			"default": "new"
+		},
+	"availability": {
+			"required": 1,
+			"default": "in stock"
+		},
+	"price": {
+			"required": 1,
+			"default": null
+		},
+	"sale_price": {
+			"required": 0,
+			"default": null
+		},
+	"sale_price_effective_date": {
+			"required": 0,
+			"default": null
+		},
+	"brand": {
+			"required": 1,
+			"default": null
+		},
+	"gtin": {
+			"required": 1,
+			"default": null
+		},
+	"mpn": {
+			"required": 0,
+			"default": null
+		},
+	"item_group_id": {
+			"required": 1,
+			"default": null
+		},
+	"color": {
+			"required": 1,
+			"default": null
+		},
+	"material": {
+			"required": 0,
+			"default": null
+		},
+	"pattern": {
+			"required": 0,
+			"default": null
+		},
+	"size": {
+			"required": 1,
+			"default": null
+		},
+	"gender": {
+			"required": 1,
+			"default": null
+		},
+	"age_group": {
+			"required": 1,
+			"default": null
+		},
+	"tax": {
+			"required": 0,
+			"default": null
+		},
+	"shipping": {
+			"required": 0,
+			"default": null
+		},
+	"shipping_weight": {
+			"required": 0,
+			"default": null
+		}
+}
