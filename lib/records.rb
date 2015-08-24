@@ -2,9 +2,9 @@
 module Record
 
   # Load db schema
-  DB_SCHEMA = JSON.parse(File.read('lib/leedb.json'), :symbolize_names=>true)
+  DB_SCHEMA = JSON.parse(File.read('lib/schemas/leedb.json'), :symbolize_names=>true)
   # Load db map
-  MAP = JSON.parse(File.read('lib/uniteu_leedb_map.json'), :symbolize_names=>true)
+  MAP = JSON.parse(File.read('lib/maps/uniteu.json'), :symbolize_names=>true)
 
   # Builds map
   def Record.build_map(table)
