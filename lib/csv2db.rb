@@ -1,7 +1,3 @@
-# Load presets
-$db_file = "lee.db"
-$log = "logs/"+DateTime.now.strftime('%Y%m%d%H%M%S')+".txt"
-
 # Load commandline files to import
 $files = []
 ARGV.each do |a|
