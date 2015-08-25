@@ -1,12 +1,3 @@
-$LOAD_PATH << "./lib"
-
-require 'sqlite3'
-require 'csv'
-require 'json'
-require 'date'
-require 'records'
-require 'test_data'
-
 # Load presets
 $db_file = "lee.db"
 $log = "logs/"+DateTime.now.strftime('%Y%m%d%H%M%S')+".txt"
