@@ -12,6 +12,7 @@ settings.yml
 /logs
 /data
 *.db-journal
+test_data.rb
 
 *.gem
 *.rbc
