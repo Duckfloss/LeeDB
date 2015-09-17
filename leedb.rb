@@ -3,14 +3,14 @@ $LOAD_PATH << "./lib"
 
 # Require Gems
 require 'sqlite3'
-require 'csv'
-require 'json'
+require 'xmlsimple'
+require 'zip'
 require 'date'
 
 # Require Classes
-require 'csv2db'
-require 'google_shopping'
-require 'records'
+#require 'csv2db'
+#require 'records'
+require 'rpro'
 require 'test_data'
 
 # Load presets

@@ -1,0 +1,42 @@
+{
+	"tables": [
+		"product_groups",
+		"product_items"
+	],
+	"Style": {
+		"Item": {
+			"fldItemNum": "",
+			"fldItemSID": "",
+			"fldALU": "",
+			"fldTotOnHnd": "",
+			"fldCost": "",
+			"fldAttr": "",
+			"fldUDF0": "",
+			"fldSize": "",
+			"AvailQuantity": "",
+			"Availability": ""
+		},
+		"fldStyleSID": "",
+		"fldDCS": "",
+		"fldDCSName": "",
+		"fldVendorCode": "",
+		"fldDesc1": "",
+		"fldDesc2": "",
+		"fldStyleName": "",
+		"fldStyleLongDesc": "",
+		"fldAvailAtStore": "",
+		"fldInStockMsg": "",
+		"fldOutStockMsg": "",
+		"fldTaxCd": "",
+		"fldAvailThreshold": "",
+		"fldVendor": "",
+		"fldInStockMsg_i": "",
+		"fldTaxCd_i": "",
+		"fldStylePicture": "",
+		"fldStyleThumbnail": "",
+		"fldAvailDateFormat": ""
+	},
+	"Style_Avail": {
+		
+	}
+}
