@@ -16,7 +16,7 @@ class RProRecord
 
 	def fromxml(xml, type="product")
 
-		@Products = { "Groups"=>[],"Items"=>[],"Categories"=>[] }
+		@Products = { "product_groups"=>[],"product_items"=>[],"product_meta"=>[] }
 
 		# Convert XML
 	  thisxml = XmlSimple.xml_in(toUTF(xml))
@@ -44,8 +44,8 @@ class RProRecord
 						"vendor_code" => "#{style["fldVendorCode"]}"
 					}
 					thiscategory = { "category_id"=>"#{style["fldDCS"]}", "pf_id"=>"#{style["fldStyleSID"]}" }
-					@Products["Groups"] << thisgroup
-					@Products["Categories"] << thiscategory
+					@Products["product_groups"] << thisgroup
+					@Products["product_meta"] << thiscategory
 
 					style["Item"].each do |item|
 						thisitem = {
@@ -59,7 +59,7 @@ class RProRecord
 							"order_code" => "#{item["fldALU"]}",
 							"img_large" => "#{item["fldItemSID"]}_lg.jpg",
 						}
-						@Products["Items"] << thisitem
+						@Products["product_items"] << thisitem
 
 					end
 				end
@@ -72,7 +72,7 @@ class RProRecord
 							"pf_id" => "#{item["fldItemSID"]}",
 							"inventory_level" => "#{item["AvailQuantity"]}"
 						}
-						@Products["Items"] << thisitem
+						@Products["product_items"] << thisitem
 					end
 				end
 			end
