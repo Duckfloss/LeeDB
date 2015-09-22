@@ -46,23 +46,24 @@ class RProRecord
 					thiscategory = { "category_id"=>"#{style["fldDCS"]}", "pf_id"=>"#{style["fldStyleSID"]}" }
 					@Products["Groups"] << thisgroup
 					@Products["Categories"] << thiscategory
+
+					style["Item"].each do |item|
+						thisitem = {
+							"sku" => "#{item["fldItemNum"]}",
+							"pf_id" => "#{item["fldItemSID"]}",
+							"attr_value1" => "#{item["fldAttr"]}",
+							"attr_value2" => "#{item["fldSize"]}",
+							"price" => "#{item["Price"][0]["Value"]}",
+							"cost" => "#{item["fldCost"]}",
+							"inventory_level" => "#{item["AvailQuantity"]}",
+							"order_code" => "#{item["fldALU"]}",
+							"img_large" => "#{item["fldItemSID"]}_lg.jpg",
+						}
+						@Products["Items"] << thisitem
+
+					end
 				end
 
-				style["Item"].each do |item|
-					thisitem = {
-						"sku" => "#{item["fldItemNum"]}",
-						"pf_id" => "#{item["fldItemSID"]}",
-						"attr_value1" => "#{item["fldAttr"]}",
-						"attr_value2" => "#{item["fldSize"]}",
-						"price" => "#{item["Price"][0]["Value"]}",
-						"cost" => "#{item["fldCost"]}",
-						"inventory_level" => "#{item["AvailQuantity"]}",
-						"order_code" => "#{item["fldALU"]}",
-						"img_large" => "#{item["fldItemSID"]}_lg.jpg",
-					}
-					@Products["Items"] << thisitem
-
-				end
 			elsif !thisxml["Style_Avail"].nil?
 				thisxml["Style_Avail"].each do |style|
 					style["Item_Avail"].each do |item|
