@@ -3,11 +3,14 @@
 class DB
 
   # Open database on object creation
+  # db is the name of the database
   def initialize(db)
     @db = SQLite3::Database.new "#{db}"
   end
 
   # Insert record into database
+  # table is the name of the table in the database
+  # hash is a hash of field names and values to insert
   def insert(table, hash)
     keys = ""
     values = []
@@ -30,6 +33,9 @@ class DB
   end
 
   # Update existing record
+  # table is the name of the table in the database
+  # hash is a hash of field names and values to insert
+  # uid is a hash of the field names and values of the key data fields
   def update(table, hash, uid)
 		keys = ""
 		values = []
@@ -55,6 +61,8 @@ class DB
   end
 
   # Check if UID exists
+  # table is the name of the table in the database
+  # uid is a hash of the field names and values of the key data fields
   def uid_exists?(table, uid)
   	uid_exists = false
     conditions = ""
