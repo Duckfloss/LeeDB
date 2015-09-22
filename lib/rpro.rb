@@ -1,12 +1,4 @@
 
-	def toUTF(file)
-	  file = File.open(file)
-		file = file.read
-	  file.force_encoding(Encoding::Windows_1252)
-	  file = file.encode!(Encoding::UTF_8, :universal_newline => true)
-	end
-
-
 def unzip(file)
 	Zip::File.open(file) do |zip_file|
 		# Handle entries one by one
