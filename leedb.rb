@@ -9,10 +9,11 @@ require 'date'
 
 # Require Classes
 #require 'csv2db'
-#require 'records'
+require 'records'
 require 'rpro'
+require 'db'
 require 'test_data'
 
 # Load presets
-$db_file = "lee.db"
+$db = "lee.db"
 $log = "logs/"+DateTime.now.strftime('%Y%m%d%H%M%S')+".txt"
