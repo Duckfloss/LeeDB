@@ -3,6 +3,7 @@ $LOAD_PATH << "./lib"
 
 # Require Gems
 require 'sqlite3'
+require 'json'
 require 'xmlsimple'
 require 'zip'
 require 'date'
