@@ -20,7 +20,7 @@ class RProRecord
 	  thisxml = XmlSimple.xml_in(toUTF(xml))
 
 		if type == "product"
-			@Products = { "product_groups"=>[],"product_items"=>[],"product_meta"=>[] }
+			@Products = { "product_groups"=>[],"product_items"=>[] }
 
 			# Cycle through Hash
 			if !thisxml["Style"].nil?
