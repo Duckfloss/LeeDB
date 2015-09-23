@@ -1,5 +1,5 @@
 class RProRecord
-	@@type = [ "product","customer","salesorder" ]
+	@@type = [ "product","customer","salesorder","category" ]
 
 	attr_reader :Products
 
@@ -16,12 +16,12 @@ class RProRecord
 
 	def fromxml(xml, type="product")
 
-		@Products = { "product_groups"=>[],"product_items"=>[],"product_meta"=>[] }
-
 		# Convert XML
 	  thisxml = XmlSimple.xml_in(toUTF(xml))
 
 		if type == "product"
+			@Products = { "product_groups"=>[],"product_items"=>[],"product_meta"=>[] }
+
 			# Cycle through Hash
 			if !thisxml["Style"].nil?
 				thisxml["Style"].each do |style|
@@ -43,9 +43,7 @@ class RProRecord
 						"google_shopping" => nil,
 						"vendor_code" => "#{style["fldVendorCode"]}"
 					}
-					thiscategory = { "category_id"=>"#{style["fldDCS"]}", "pf_id"=>"#{style["fldStyleSID"]}" }
 					@Products["product_groups"] << thisgroup
-					@Products["product_meta"] << thiscategory
 
 					style["Item"].each do |item|
 						thisitem = {
