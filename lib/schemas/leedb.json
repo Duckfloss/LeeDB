@@ -1,6 +1,6 @@
 {
 	"product_items": {
-		"KEY": "sku",
+		"KEY": ["sku"],
 		"FIELDS": {
 			"sku": { "type": "INTEGER", "rules": "(KEY-NOTNULL-UNIQUE)", "format": null, "default": null },
 			"pf_id": { "type": "TEXT", "rules": "(NOTNULL)", "format": "alpha16", "default": null },
@@ -21,7 +21,7 @@
 		}
 	},
 	"product_groups": {
-		"KEY": "pf_id",
+		"KEY": ["pf_id"],
 		"FIELDS": {
 			"dept_id": { "type": "INTEGER", "rules": "(NOTNULL)", "format": "int4", "default": null },
 			"pf_id": { "type": "TEXT", "rules": "(KEY-NOTNULL-UNIQUE)", "format": "alpha16", "default": null },
@@ -43,14 +43,14 @@
 		}
 	},
 	"product_meta": {
-		"KEY": "pf_id-category_id",
+		"KEY": ["pf_id","category_id"],
 		"FIELDS": {
 			"pf_id": { "type": "TEXT", "rules": "(KEY-NOTNULL)", "format": "alpha16", "default": null },
 			"category_id": { "type": "INTEGER", "rules": "(KEY-NOTNULL)", "format": "int4", "default": null }
 		}
 	},
 	"categories": {
-		"KEY": "id",
+		"KEY": ["id"],
 		"FIELDS": {
 			"id": { "type": "INTEGER", "rules": "(KEY-NOTNULL-UNIQUE)", "format": "int4", "default": null },
 			"name": { "type": "TEXT", "rules": "(NOTNULL)", "format": null, "default": null },
@@ -62,7 +62,7 @@
 		}
 	},
 	"customers": {
-		"KEY": "id",
+		"KEY": ["id"],
 		"FIELDS": {
 			"id": { "type": "TEXT", "rules": "(KEY-NOTNULL-UNIQUE)", "format": null, "default": null },
 			"last_name": { "type": "TEXT", "rules": "(NOTNULL)", "format": null, "default": null },
@@ -85,7 +85,7 @@
 		}
 	},
 	"order_items": {
-		"KEY": "id-sku",
+		"KEY": ["id","sku"],
 		"FIELDS": {
 			"id": { "type": "INTEGER", "rules": "(KEY-NOTNULL)", "format": null, "default": null },
 			"sku": { "type": "INTEGER", "rules": "(KEY-NOTNULL)", "format": null, "default": null },
@@ -95,7 +95,7 @@
 		}
 	},
 	"orders": {
-		"KEY": "id",
+		"KEY": ["id"],
 		"FIELDS": {
 			"id": { "type": "INTEGER", "rules": "(KEY-NOTNULL-UNIQUE)", "format": null, "default": null },
 			"cust_id": { "type": "INTEGER", "rules": "(NOTNULL)", "format": null, "default": null },
@@ -120,7 +120,7 @@
 		}
 	},
 	"shipping": {
-		"KEY": "order_id",
+		"KEY": ["order_id"],
 		"FIELDS": {
 			"order_id": { "type": "INTEGER", "rules": "(KEY-NOTNULL-UNIQUE)", "format": null, "default": null },
 			"tracking_id": { "type": "TEXT", "rules": "(NOTNULL-UNIQUE)", "format": null, "default": null },
@@ -129,7 +129,7 @@
 		}
 	},
 	"google_shopping": {
-		"KEY": "id",
+		"KEY": ["id"],
 		"FIELDS": {
 			"id": { "type": "TEXT", "rules": "(KEY-NOTNULL-UNIQUE)", "format": null, "default": null },
 			"title": { "type": "TEXT", "rules": "(NOTNULL)", "format": null, "default": null },
