@@ -7,11 +7,11 @@ class RProRecord
 		fromxml(xml)
 	end
 
-	def toUTF(file)
-	  file = File.open(file)
-		file = file.read
-	  file.force_encoding(Encoding::Windows_1252)
-	  file = file.encode!(Encoding::UTF_8, :universal_newline => true)
+	def toUTF(string)
+#	  file = File.open(file)
+#		file = file.read
+	  string.force_encoding(Encoding::Windows_1252)
+	  string = string.encode!(Encoding::UTF_8, :universal_newline => true)
 	end
 
 	def fromxml(xml, type="product")
