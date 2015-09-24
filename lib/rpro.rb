@@ -8,16 +8,15 @@ class RProRecord
 	end
 
 	def toUTF(string)
-#	  file = File.open(file)
-#		file = file.read
-	  string.force_encoding(Encoding::Windows_1252)
-	  string = string.encode!(Encoding::UTF_8, :universal_newline => true)
+	  string.force_encoding(Encoding::Windows_1252) #Set encoding
+		string.gsub!(/\u001F/,"") #Get rid of obnoxious character
+	  string = string.encode!(Encoding::UTF_8, :universal_newline => true) #Convert encoding
 	end
 
 	def fromxml(xml, type="product")
 
 		# Convert XML
-	  thisxml = XmlSimple.xml_in(toUTF(xml))
+	  thisxml = XmlSimple.xml_in(toUTF(File.read(xml)))
 
 		if type == "product"
 			@Products = { "product_groups"=>[],"product_items"=>[] }
@@ -29,8 +28,6 @@ class RProRecord
 						"pf_id" => "#{style["fldStyleSID"]}",
 						"name" => "#{style["fldStyleName"]}",
 						"description" => "#{style["fldStyleLongDesc"]}",
-						"msrp_price" => "#{style["Item"][0]["Price"][0]["Value"]}",
-						"list_price" => "#{style["Item"][0]["Price"][0]["Value"]}",
 						"img_thumbnail" => "#{style["fldStylePicture"]}",
 						"sale_price" => nil,
 						"sale_start" => nil,
@@ -43,6 +40,8 @@ class RProRecord
 						"google_shopping" => nil,
 						"vendor_code" => "#{style["fldVendorCode"]}"
 					}
+					thisgroup["msrp_price"] = "#{style["Item"][0]["Price"][0]["Value"]}" unless style["Item"][0]["Price"].nil?
+					thisgroup["list_price"] = "#{style["Item"][0]["Price"][0]["Value"]}" unless style["Item"][0]["Price"].nil?
 					@Products["product_groups"] << thisgroup
 
 					style["Item"].each do |item|
@@ -51,12 +50,12 @@ class RProRecord
 							"pf_id" => "#{item["fldItemSID"]}",
 							"attr_value1" => "#{item["fldAttr"]}",
 							"attr_value2" => "#{item["fldSize"]}",
-							"price" => "#{item["Price"][0]["Value"]}",
 							"cost" => "#{item["fldCost"]}",
 							"inventory_level" => "#{item["AvailQuantity"]}",
 							"order_code" => "#{item["fldALU"]}",
 							"img_large" => "#{item["fldItemSID"]}_lg.jpg",
 						}
+						thisitem["price"] = "#{item["Price"][0]["Value"]}" unless item["Price"].nil?
 						@Products["product_items"] << thisitem
 
 					end
