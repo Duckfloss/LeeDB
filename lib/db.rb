@@ -83,4 +83,13 @@ class DB
     end
   	return uid_exists
   end
+
+  def listtables
+    thesetables = []
+    tables = @db.execute "SELECT name FROM sqlite_master WHERE type='table'"
+    tables.each { |table| thesetables << table[0] }
+    return thesetables
+  end
+
+
 end
