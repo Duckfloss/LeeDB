@@ -73,6 +73,40 @@ class RProRecord
 					end
 				end
 			end
+		elsif type == "category"
+			@Products = { "product_meta"=>[] }
+
+			# Cycles through multidimensional array/hash
+			def cyclethru(data, parent="",style=false)
+			  if data.is_a?(Array)
+			    data.each { |array| cyclethru(array,parent,style) }
+			  elsif data.is_a?(Hash)
+			    if style == true
+						thisitem = {
+							"pf_id" => "#{data['SID']}",
+							"rpro_id" => "#{parent}"
+						}
+					  $Products["product_meta"] << thisitem
+			    else
+			      if data.has_key? "Style"
+			        cyclethru(data["Style"],data["SID"],true)
+			        if data.has_key? "TreeNode"
+			          cyclethru(data["TreeNode"],style=false)
+			        end
+			      elsif data.has_key? "TreeNode"
+			        cyclethru(data["TreeNode"],style=false)
+			      end
+			    end
+			  end
+			end
+
+			# Cycle through Array/Hash
+			if !thisxml["TreeNode"].nil?
+				cyclethru(thisxml)
+			end
+
+		elsif type == "salesorder"
+
 		end
 	end
 end
