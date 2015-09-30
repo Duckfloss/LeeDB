@@ -18,6 +18,7 @@ class RProRecord
 		# Convert XML
 	  thisxml = XmlSimple.xml_in(toUTF(File.read(xml)))
 
+# >> PRODUCT loop
 		if type == "product"
 			@Products = { "product_groups"=>[],"product_items"=>[] }
 
@@ -73,6 +74,8 @@ class RProRecord
 					end
 				end
 			end
+
+# >>CATEGORY loop
 		elsif type == "category"
 			@Products = { "product_meta"=>[] }
 
@@ -105,7 +108,13 @@ class RProRecord
 				cyclethru(thisxml)
 			end
 
+# >> SALES ORDER loop
 		elsif type == "salesorder"
+
+# >> CUSTOMER loop
+		elsif type == "customer"
+
+
 
 		end
 	end
