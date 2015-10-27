@@ -84,6 +84,7 @@ class DB
   	return uid_exists
   end
 
+  # Lists the tables in the database
   def listtables
     thesetables = []
     tables = @db.execute "SELECT name FROM sqlite_master WHERE type='table'"

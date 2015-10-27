@@ -1,3 +1,8 @@
+# Converts RPro XML files to LeeDB format
+#
+# This takes the XML files output by RPro and converts them into
+# a format we can use to insert in the LeeDB database.
+
 class RProRecord
 	@@type = [ "product","customer","salesorder","category" ]
 

@@ -1,3 +1,9 @@
+# # Converts exports from UniteU to LeeDB format
+#
+# UniteU outputs data as csv files. This parses the files into
+# a format we can use to import data into our LeeDB.
+
+
 # Load commandline files to import
 $files = []
 ARGV.each do |a|
@@ -226,7 +232,3 @@ def doit(files)
 		end
 	end
 end
-
-
-# Run the main function
-#doit($files)
