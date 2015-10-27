@@ -1,3 +1,8 @@
+Dir.chdir("./lib")
+
+load './leedb.rb'
+load '../test_data.rb'
+
 def unzip(file)
 	Zip::File.open(file) do |zip_file|
 		# Handle entries one by one
