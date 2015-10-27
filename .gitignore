@@ -8,12 +8,12 @@ ehthumbs.db
 .LSOverride
 
 #mine
-settings.yml
+*.db-journal
+dothething.rb
+test_data.rb
+lee.db
 /logs
 /data
-*.db-journal
-test_data.rb
-lib/csv2db.rb
 
 *.gem
 *.rbc
@@ -47,4 +47,3 @@ build/
 # Gemfile.lock
 # .ruby-version
 # .ruby-gemset
-

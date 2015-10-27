@@ -1,4 +1,4 @@
-# Add lib to load path
+# Add leedb to load path
 $LOAD_PATH << "./leedb"
 
 # Require Gems
