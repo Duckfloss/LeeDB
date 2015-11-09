@@ -41,24 +41,13 @@ class Category
   KEY="id"
   TABLE="categories"
 
+  attr_reader :map, :attributes, :uid
+
   # Constructor
   def initialize(data)
     @map = Record.build_map("departments")
     @attributes = Record.build_attributes(TABLE,data,@map)
     @uid = { "#{KEY}" => @attributes[:"#{KEY}"] }
-  end
-
-  # Accessors
-  def getMap
-    @map
-  end
-
-  def getAttributes
-    @attributes
-  end
-
-  def getUID
-    @uid
   end
 end
 
@@ -69,29 +58,14 @@ class ProductGroup
   KEY="pf_id"
   TABLE="product_groups"
 
+  attr_reader :map, :attributes, :uid
+
   # Constructor
   def initialize(data)
     @map = Record.build_map("products")
     @attributes = Record.build_attributes(TABLE,data,@map)
     @uid = { "#{KEY}" => @attributes[:"#{KEY}"] }
     @cat = [ @attributes.delete(:dept_id), @attributes[:pf_id] ]
-  end
-
-  # Accessors
-  def getMap
-    @map
-  end
-
-  def getAttributes
-    @attributes
-  end
-
-  def getUID
-    @uid
-  end
-
-  def getCat
-    @cat
   end
 end
 
@@ -102,24 +76,13 @@ class ProductItem
   KEY="sku"
   TABLE="product_items"
 
+  attr_reader :map, :attributes, :uid
+
   # Constructor
   def initialize(data)
     @map = Record.build_map("variants")
     @attributes = Record.build_attributes(TABLE,data,@map)
     @uid = { "#{KEY}" => @attributes[:"#{KEY}"] }
-  end
-
-  # Accessors
-  def getMap
-    @map
-  end
-
-  def getAttributes
-    @attributes
-  end
-
-  def getUID
-    @uid
   end
 end
 
@@ -130,24 +93,13 @@ class Customer
   KEY="id"
   TABLE="customers"
 
+  attr_reader :map, :attributes, :uid
+
   # Constructor
   def initialize(data)
     @map = Record.build_map("shoppers")
     @attributes = Record.build_attributes(TABLE,data,@map)
     @uid = { "#{KEY}" => @attributes[:"#{KEY}"] }
-  end
-
-  # Accessors
-  def getMap
-    @map
-  end
-
-  def getAttributes
-    @attributes
-  end
-
-  def getUID
-    @uid
   end
 end
 
@@ -158,24 +110,13 @@ class Order
   KEY="id"
   TABLE="orders"
 
+  attr_reader :map, :attributes, :uid
+
   # Constructor
   def initialize(data)
     @map = Record.build_map("salesorders")
     @attributes = Record.build_attributes(TABLE,data,@map)
     @uid = { "#{KEY}" => @attributes[:"#{KEY}"] }
-  end
-
-  # Accessors
-  def getMap
-    @map
-  end
-
-  def getAttributes
-    @attributes
-  end
-
-  def getUID
-    @uid
   end
 end
 
@@ -186,6 +127,8 @@ class OrderItem
   KEY=["id","sku"]
   TABLE = "order_items"
 
+  attr_reader :map, :attributes, :uid
+
   # Constructor
   def initialize(data)
     @map = Record.build_map("salesorderssubitems")
@@ -194,18 +137,5 @@ class OrderItem
     KEY.each do |i|
       @uid["#{i}"] = @attributes[:"#{i}"]
     end
-  end
-
-  # Accessors
-  def getMap
-    @map
-  end
-
-  def getAttributes
-    @attributes
-  end
-
-  def getUID
-    @uid
   end
 end
