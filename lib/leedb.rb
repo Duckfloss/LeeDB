@@ -10,6 +10,6 @@ require 'date'
 
 # Require Classes
 require 'db'
-require 'records'
+require 'record'
 require 'uniteu'
 require 'rpro'
