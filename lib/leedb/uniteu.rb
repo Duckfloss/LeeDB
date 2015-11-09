@@ -3,10 +3,19 @@
 # UniteU outputs data as csv files. This parses the files into
 # a format we can use to import data into our LeeDB.
 
-class UniteURecord
+class UniteU
+	include Map
+	include Record
+
+
+	attr_reader :record_type
+
 
 	def initialize(file)
-		parse_csv(file)
+		@file = file
+		@record_type = guess_record_type(file)
+#		parse_csv(file)
+
 	end
 
 	# Validate field data
@@ -32,97 +41,23 @@ class UniteURecord
 		end
 	end
 
-	# Try to guess which table we're working on here
-	def guess_table(file)
+	# Try to guess which type of record we're importing
+	def guess_record_type(file)
 		file.downcase!
-		$map[:tables].each do |t|
+		MAP[:tables].each do |t|
 			if file.match(t)
 				table = t
 				return table
 			end
 		end
-		puts "What table does #{file} map to:\n"
-		$map[:tables].each do |t|
+		puts "What type of record is #{file}?\n"
+		MAP[:tables].each do |t|
 			puts "\t#{t}\n"
 		end
 		table = gets.chomp
 		return table
 	end
 
-	# Check if UID exists
-	def uid_exists?(uid)
-		uid_exists = false
-		values = []
-		q = "SELECT * FROM #{$db_table} WHERE"
-		uid.each do |k,v|
-			q << " #{k}=?,"
-			values << v
-		end
-		q.chomp!(",")
-		q.gsub!(","," AND ")
-		query = $db.prepare "#{q}"
-		query.bind_params(values)
-		uid_exists = true if query.execute.count > 0
-		return uid_exists
-	end
-
-	# Interacts with SQlite database
-	def send_to_db(record)
-		# Check if record exists in db
-		# If not, insert it
-		if !uid_exists?(record.getUID)
-			keys = ""
-			values = []
-			record.getAttributes.each do |k,v|
-				keys << "#{k},"
-				values << v
-			end
-			keys.chomp!(",")
-			q = "INSERT INTO #{$db_table} (#{keys}) VALUES ("
-			values.each { q << "?," }
-			q.chomp!(",")
-			q << ")"
-			query = $db.prepare "#{q}"
-			query.bind_params(values)
-		else # If it does exist, then we are updating it
-			keys = []
-			values = []
-			where = ""
-			wherev = []
-			record.getUID.each do |k,v|
-				record.getAttributes.delete(:"#{k}")
-				where << " #{k}=?,"
-				wherev << v
-			end
-			where.chomp!(",")
-			where.gsub!(","," AND ")
-			record.getAttributes.each do |k,v|
-				keys << k.to_s
-				values << v
-			end
-			q = "UPDATE #{$db_table} SET"
-			keys.each { |key| q << " #{key}=?," }
-			q.chomp!(",")
-			q << " WHERE #{where}"
-			wherev.map { |v| values << v }
-			query = $db.prepare "#{q}"
-			query.bind_params(values)
-		end
-		query.execute
-	end
-
-	# Specifically updates product_meta table
-	def send_cat_to_db(cat)
-		# Check if it exists already
-		find = $db.prepare "SELECT * FROM product_meta WHERE category_id=? AND pf_id=?"
-		find.bind_params(cat)
-		# And if it doesn't exist, insert it
-		if find.execute.count < 1
-			query = $db.prepare "INSERT INTO product_meta (category_id, pf_id) VALUES (?,?)"
-			query.bind_params(cat)
-			query.execute
-		end
-	end
 
 	# Builds map
 	def build_map(table)
@@ -148,7 +83,7 @@ class UniteURecord
 	def parse_csv(file)
 		puts "file" # REMOVE THIS <<<<<<<<
 		# Guess what kind of file it is
-		$csv_table = guess_table(file)
+		$csv_table = guess_record_type(file)
 		# Load corresponding schema
 		$db_table = $map[:"#{$csv_table}"][:table]
 		$this_map = build_map($csv_table)
@@ -159,9 +94,6 @@ class UniteURecord
 		# Break it open and go through rows
 		rows = CSV.read(file, :headers => true,:skip_blanks => true,:header_converters => :symbol)
 
-		# Open database
-		$db = SQLite3::Database.new "#{$db_file}"
-
 		# To count rows
 		rowno = 1
 		rows.each do |row|
@@ -171,16 +103,6 @@ class UniteURecord
 			puts "#{rowno}..." # REMOVE THIS <<<<<<<<
 			# Creates record object
 			record = create_record($db_table,row)
-			# Gets record attributes
-	#		fields = record.getAttributes unless record == "unknown"
-	#		fields.each do |k,v|
-				# Validate each field
-	#			format = $this_schema[:FIELDS][:"#{k}"][:format]
-	#			if format!=nil && validate(v, format)!=true
-	#				error="#{file}::#{rowno}::#{k}/#{v}"
-	#				write_log(error,"30")
-	#			end
-	#		end
 
 			# This just splits out "product_groups" so we can categorize
 			# in another table
@@ -194,7 +116,5 @@ class UniteURecord
 			end
 		end
 
-	#ensure
-	#	$db.close if $db
 	end
 end

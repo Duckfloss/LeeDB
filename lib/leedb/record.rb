@@ -3,15 +3,6 @@ module Record
 
   # Load db schema
   DB_SCHEMA = JSON.parse(File.read('leedb/schemas/leedb.json'), :symbolize_names=>true)
-  # Load db map
-  MAP = JSON.parse(File.read('leedb/maps/uniteu.json'), :symbolize_names=>true)
-
-  # Builds map
-  def Record.build_map(table)
-    this_map = Hash.new
-  	MAP[:"#{table}"][:fields].each { |k,v| this_map["#{k}"] = "#{v}" unless v==nil }
-  	return this_map
-  end
 
   # Builds object attributes
   def Record.build_attributes(table,data,map)

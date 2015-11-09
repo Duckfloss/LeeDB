@@ -3,13 +3,16 @@
 # This takes the XML files output by RPro and converts them into
 # a format we can use to insert in the LeeDB database.
 
-class RProRecord
+class RPro
+	include Map
+	include Record
 
 	@@type = [ "product","customer","salesorder","category","prefs" ]
 
 	attr_reader :Products
 
-	def initialize(zip)
+	def initialize(file)
+		@file = file
 		@zipdir = File.dirname(zip)
 		extractZip(zip)
 	end
