@@ -1,132 +1,155 @@
 # Shared record methods
-module Record
+class Record
 
-  # Load db schema
-  DB_SCHEMA = JSON.parse(File.read('leedb/schemas/leedb.json'), :symbolize_names=>true)
+  attr_reader :type, :fields
 
-  # Builds object attributes
-  def Record.build_attributes(table,data,map)
-    attributes = Hash.new
-    DB_SCHEMA[:"#{table}"][:FIELDS].each_key do |k|
-      this_map = map.invert["#{k}"]
-      type = DB_SCHEMA[:"#{table}"][:FIELDS][:"#{k}"][:type]
-      if data[:"#{this_map}"]==" " || data[:"#{this_map}"]==nil
-        attributes[:"#{k}"] = nil
+  def initialize(data = {})
+    create_record(data)
+  end
+
+  # Defines data types in singular and plural
+  TYPES = [
+    "category",
+    "product_group",
+    "product_item",
+    "product_meta",
+    "customer",
+    "order",
+    "order_item"
+  ]
+
+  TABLES = [
+    "categories",
+    "product_groups",
+    "product_items",
+    "product_meta",
+    "customers",
+    "orders",
+    "order_items"
+  ]
+
+  # Creates the record object
+  def create_record(data={}, type="")
+    if data.empty?
+      # Create blank record
+      if type!="" AND !TYPES.find_index(type).nil?
+
       else
-      	case type
-        	when "REAL" then attributes[:"#{k}"] = data[:"#{this_map}"].to_f
-        	when "INTEGER" then attributes[:"#{k}"] = data[:"#{this_map}"].to_i
-        	when "TEXT" then attributes[:"#{k}"] = data[:"#{this_map}"].to_s
-        end
+        @fields={}
       end
+    elsif TYPES.find_index(type).nil?
+      raise ArgumentError.new("Must indicate valid Record type")
+    else
+
     end
-    return attributes
+
+    @type=type
+
   end
 
-end
 
-class Category
-  include Record
 
-  # Constants
-  KEY="id"
-  TABLE="categories"
 
-  attr_reader :map, :attributes, :uid
 
-  # Constructor
-  def initialize(data)
-    @map = Record.build_map("departments")
-    @attributes = Record.build_attributes(TABLE,data,@map)
-    @uid = { "#{KEY}" => @attributes[:"#{KEY}"] }
+
+
+  class Category
+
+    # Constants
+    KEY="id"
+    TABLE="categories"
+
+    attr_reader :map, :attributes, :uid
+
+    # Constructor
+    def initialize(data)
+      @map = Record.build_map("departments")
+      @attributes = Record.build_attributes(TABLE,data,@map)
+      @uid = { "#{KEY}" => @attributes[:"#{KEY}"] }
+    end
   end
-end
 
-class ProductGroup
-  include Record
+  class ProductGroup
 
-  # Constants
-  KEY="pf_id"
-  TABLE="product_groups"
+    # Constants
+    KEY="pf_id"
+    TABLE="product_groups"
 
-  attr_reader :map, :attributes, :uid
+    attr_reader :map, :attributes, :uid
 
-  # Constructor
-  def initialize(data)
-    @map = Record.build_map("products")
-    @attributes = Record.build_attributes(TABLE,data,@map)
-    @uid = { "#{KEY}" => @attributes[:"#{KEY}"] }
-    @cat = [ @attributes.delete(:dept_id), @attributes[:pf_id] ]
+    # Constructor
+    def initialize(data)
+      @map = Record.build_map("products")
+      @attributes = Record.build_attributes(TABLE,data,@map)
+      @uid = { "#{KEY}" => @attributes[:"#{KEY}"] }
+      @cat = [ @attributes.delete(:dept_id), @attributes[:pf_id] ]
+    end
   end
-end
 
-class ProductItem
-  include Record
+  class ProductItem
 
-  # Constants
-  KEY="sku"
-  TABLE="product_items"
+    # Constants
+    KEY="sku"
+    TABLE="product_items"
 
-  attr_reader :map, :attributes, :uid
+    attr_reader :map, :attributes, :uid
 
-  # Constructor
-  def initialize(data)
-    @map = Record.build_map("variants")
-    @attributes = Record.build_attributes(TABLE,data,@map)
-    @uid = { "#{KEY}" => @attributes[:"#{KEY}"] }
+    # Constructor
+    def initialize(data)
+      @map = Record.build_map("variants")
+      @attributes = Record.build_attributes(TABLE,data,@map)
+      @uid = { "#{KEY}" => @attributes[:"#{KEY}"] }
+    end
   end
-end
 
-class Customer
-  include Record
+  class Customer
 
-  # Constants
-  KEY="id"
-  TABLE="customers"
+    # Constants
+    KEY="id"
+    TABLE="customers"
 
-  attr_reader :map, :attributes, :uid
+    attr_reader :map, :attributes, :uid
 
-  # Constructor
-  def initialize(data)
-    @map = Record.build_map("shoppers")
-    @attributes = Record.build_attributes(TABLE,data,@map)
-    @uid = { "#{KEY}" => @attributes[:"#{KEY}"] }
+    # Constructor
+    def initialize(data)
+      @map = Record.build_map("shoppers")
+      @attributes = Record.build_attributes(TABLE,data,@map)
+      @uid = { "#{KEY}" => @attributes[:"#{KEY}"] }
+    end
   end
-end
 
-class Order
-  include Record
+  class Order
 
-  # Constants
-  KEY="id"
-  TABLE="orders"
+    # Constants
+    KEY="id"
+    TABLE="orders"
 
-  attr_reader :map, :attributes, :uid
+    attr_reader :map, :attributes, :uid
 
-  # Constructor
-  def initialize(data)
-    @map = Record.build_map("salesorders")
-    @attributes = Record.build_attributes(TABLE,data,@map)
-    @uid = { "#{KEY}" => @attributes[:"#{KEY}"] }
+    # Constructor
+    def initialize(data)
+      @map = Record.build_map("salesorders")
+      @attributes = Record.build_attributes(TABLE,data,@map)
+      @uid = { "#{KEY}" => @attributes[:"#{KEY}"] }
+    end
   end
-end
 
-class OrderItem
-  include Record
+  class OrderItem
 
-  # Constants
-  KEY=["id","sku"]
-  TABLE = "order_items"
+    # Constants
+    KEY=["id","sku"]
+    TABLE = "order_items"
 
-  attr_reader :map, :attributes, :uid
+    attr_reader :map, :attributes, :uid
 
-  # Constructor
-  def initialize(data)
-    @map = Record.build_map("salesorderssubitems")
-    @attributes = Record.build_attributes(TABLE,data,@map)
-    @uid = Hash.new
-    KEY.each do |i|
-      @uid["#{i}"] = @attributes[:"#{i}"]
+    # Constructor
+    def initialize(data)
+      @map = Record.build_map("salesorderssubitems")
+      @attributes = Record.build_attributes(TABLE,data,@map)
+      @uid = Hash.new
+      KEY.each do |i|
+        @uid["#{i}"] = @attributes[:"#{i}"]
+      end
     end
   end
 end

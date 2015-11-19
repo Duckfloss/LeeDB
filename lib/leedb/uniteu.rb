@@ -44,14 +44,14 @@ class UniteU
 	# Try to guess which type of record we're importing
 	def guess_record_type(file)
 		file.downcase!
-		MAP[:tables].each do |t|
+		Map[:tables].each do |t|
 			if file.match(t)
 				table = t
 				return table
 			end
 		end
 		puts "What type of record is #{file}?\n"
-		MAP[:tables].each do |t|
+		Map[:tables].each do |t|
 			puts "\t#{t}\n"
 		end
 		table = gets.chomp
