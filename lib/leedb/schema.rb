@@ -1,9 +1,37 @@
+# Grabs the relevant schema from JSON to hash or array
+class Schema
 
-class DB::Schema
+  attr_reader :schema
+
   # Load db schema
-  DB_SCHEMA = JSON.parse(File.read('leedb/schemas/leedb.json'), :symbolize_names=>true)
+  # defaults to db
+  def initialize(type="db")
+    @json_file = which_schema?(type)
+    @schema = JSON.parse(File.read(@json_file), :symbolize_names=>true)
+  end
 
-  def initialize
+  def inspect
+    return "JSON File = #{@json_file}"
+  end
+
+  def get_fields(table)
+    fields = []
+    @schema[:"#{table}"][:FIELDS].each_key do |field_name|
+      fields << field_name.to_s
+    end
+    return fields
+  end
+
+  # Pick schema (db, uniteu, rpro, or google_shopping)
+  def which_schema?(type)
+    json_file = case type
+      when "db" then "leedb/schemas/leedb.json"
+      when "uniteu" then nil
+      when "rpro" then nil
+      when "google_shopping" then nil
+      else nil
+    end
+  end
 
   # Builds object attributes
   def Record.build_attributes(table,data,map)

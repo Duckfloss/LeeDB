@@ -1,58 +1,67 @@
 # Shared record methods
 class Record
 
-  attr_reader :type, :fields
-
-  def initialize(data = {})
-    create_record(data)
-  end
+  attr_reader :type, :fields, :details
 
   # Defines data types in singular and plural
-  TYPES = [
-    "category",
-    "product_group",
-    "product_item",
-    "product_meta",
-    "customer",
-    "order",
-    "order_item"
-  ]
+  TYPES = {
+    "category"=>"categories",
+    "product_group"=>"product_groups",
+    "product_item"=>"product_items",
+    "product_meta"=>"product_meta",
+    "customer"=>"customers",
+    "order"=>"orders",
+    "order_item"=>"order_items"
+  }
+  TABLES = ["categories", "product_groups", "product_items", "product_meta", "customers", "orders", "order_items" ]
 
-  TABLES = [
-    "categories",
-    "product_groups",
-    "product_items",
-    "product_meta",
-    "customers",
-    "orders",
-    "order_items"
-  ]
+  def initialize(type, data = {})
+    @type = type
+    @data = data
+    @details = create_record(TYPES[type])
+  end
 
-  # Creates the record object
-  def create_record(data={}, type="")
-    if data.empty?
-      # Create blank record
-      if type!="" AND !TYPES.find_index(type).nil?
+  # Creates a record object
+  def create_record(type)
 
-      else
-        @fields={}
-      end
-    elsif TYPES.find_index(type).nil?
+    details = {}
+
+    if TABLES.find_index(type).nil? # check if type is valid
       raise ArgumentError.new("Must indicate valid Record type")
     else
-
+      if @data.empty? # Create blank record
+        schema = Schema.new("db")
+        @fields = schema.get_fields(type)
+        @fields.each do |field|
+          details[field] = ""
+        end
+      else
+        puts "TODO"
+      end
     end
 
-    @type=type
+    return details
 
   end
 
 
 
+  def inspect
+    output = ""
+    if @type.length > 0
+      output << "@type = #{@type}\n"
+      output << "@details = #{@details}\n"
+    else
+      output << "blank record\n"
+    end
+    return puts output
+  end
+
+end
 
 
 
-
+=begin
   class Category
 
     # Constants
@@ -153,3 +162,4 @@ class Record
     end
   end
 end
+=end
