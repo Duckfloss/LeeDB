@@ -7,6 +7,7 @@ require 'json'
 require 'xmlsimple'
 require 'zip'
 require 'date'
+require 'csv'
 
 # Require Classes
 require 'db'
