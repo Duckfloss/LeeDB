@@ -5,8 +5,8 @@ class Import
   def initialize(file)
     @file = file
     @source = guess_source
-    @map = get_map
     @record_type = guess_record_type
+    @map = get_map
   end
 
   def inspect
@@ -17,10 +17,11 @@ class Import
   def guess_source
     # Typically csv files come from UniteU
     if @file =~ /\.csv$/ then return source = "uniteu"
-    # Typically xml files come from RPro
+    # While xml files come from RPro
     elsif @file =~ /\.xml$/ then return source = "rpro"
     # Otherwise toss out an error
-    else return "Error: No map exists"
+    else
+      raise "Error: No map exists"
     end
   end
 
@@ -36,7 +37,6 @@ class Import
       @map[:tables].each do |t|
         if @file.downcase.match(t)
           table = t
-          return table
         end
       end
     elsif @source == "rpro"
@@ -66,6 +66,27 @@ class Import
       return !string.to_s[format].nil?
     end
   end
+
+def parse_csv(file)
+  # Initialize array
+  data = []
+
+  # Break open CSV and go through rows
+  begin
+    rows = CSV.read(file, :headers => true,:skip_blanks => true,:header_converters => :symbol, :encoding => 'UTF-8')
+  rescue Exception => e
+    # Convert to UTF-8 if necessary
+    rows = CSV.read(file, :headers => true,:skip_blanks => true,:header_converters => :symbol, :encoding => 'Windows-1252:UTF-8')
+  end
+
+  rows.each do |row|
+
+
+  end
+
+
+end
+
 
 
   # UniteU data
