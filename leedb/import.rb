@@ -1,17 +1,26 @@
 class Import
 
-  attr_reader :file, :data_source, :map, :record_type, :json
+  attr_reader :file, :data_source, :source_type, :records, :map, :json, :data, :record_type
 
   def initialize(file)
     @file = file
     @data_source = guess_source
     @json = JSON.parse(File.read("leedb/maps/#{@data_source}.json"), :symbolize_names=>true)
-    @record_type = guess_record_type
-    @map = get_map
+    @source_type = guess_source_type
+    @record_type = @json[:"#{@source_type}"][:type]
+    @map = @json[:"#{@source_type}"][:fields]
+    @data = parse_csv(@file)
+    @records = convert(@data)
+
   end
 
   def inspect
     return "File=\"#{@file.to_s}\""
+#    output = ""
+#    @records.each do |i|
+#      output << "#{i[:pf_id]}\n"
+#    end
+#    return output
   end
 
   # Guess where this data comes from
@@ -26,13 +35,8 @@ class Import
     end
   end
 
-  # Get the conversion map based on the data source
-  def get_map
-    map = @json[:"#{@record_type}"][:fields]
-  end
-
   # Guess the record type based on source and file name
-  def guess_record_type
+  def guess_source_type
     table = ""
     if @data_source == "uniteu"
       @json[:tables].each do |t|
@@ -82,6 +86,18 @@ def parse_csv(file)
   data
 end
 
+# Creates an Array of Records
+def convert(data)
+  records = []
+  data.each do |row|
+    record = {}
+    @map.each do |k,v|
+      record[v.to_sym] = row[k]
+    end
+    records << Record.new(@record_type,record)
+  end
+  records
+end
 
 
   # UniteU data
@@ -104,7 +120,7 @@ end
     def parse_csv(file)
       puts "file" # REMOVE THIS <<<<<<<<
       # Guess what kind of file it is
-      $csv_table = guess_record_type(file)
+      $csv_table = guess_source_type(file)
       # Load corresponding schema
       $db_table = $map[:"#{$csv_table}"][:table]
       $this_map = build_map($csv_table)
