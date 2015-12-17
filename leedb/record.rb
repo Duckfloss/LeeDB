@@ -13,7 +13,7 @@ class Record
     "order"=>"orders",
     "order_item"=>"order_items"
   }
-  TABLES = ["categories", "product_groups", "product_items", "product_meta", "customers", "orders", "order_items" ]
+  TABLES = TYPES.values
 
   def initialize(type, data = {})
     @type = type
@@ -29,14 +29,16 @@ class Record
     if TABLES.find_index(type).nil? # check if type is valid
       raise ArgumentError.new("Must indicate valid Record type")
     else
+      schema = Schema.new("db")
+      @fields = schema.get_fields(type)
       if @data.empty? # Create blank record
-        schema = Schema.new("db")
-        @fields = schema.get_fields(type)
         @fields.each do |field|
           details[field] = ""
         end
       else
-        puts "TODO"
+        @fields.each do |field|
+          details[field] = @data[field]
+        end
       end
     end
 
