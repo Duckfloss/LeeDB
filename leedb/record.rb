@@ -1,5 +1,5 @@
 # Shared record methods
-class Record
+class Record < Lee
 
   attr_reader :type, :fields, :details
 
@@ -39,19 +39,27 @@ class Record
         end
       end
     end
-    return details
+    details
   end
 
 
   def inspect
     output = ""
     if @type.length > 0
-      output << "<@type = #{@type} - "
-      output << "@details = #{@details.to_s.slice(0,60)}...>\n"
+      return @details
+#      output << "<@type = #{@type} - "
+#      output << "@details = #{@details.to_s.slice(0,60)}...>\n"
     else
-      output << "<blank record>\n"
+#      output << "<blank record>\n"
+#    end
+    return output
     end
-    return puts output
+  end
+
+  def send_to_db
+
+
+
   end
 
 end

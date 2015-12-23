@@ -1,5 +1,5 @@
 # Grabs the relevant schema from JSON to hash or array
-class Schema
+class Schema < Lee
 
   attr_reader :schema
 
@@ -11,7 +11,7 @@ class Schema
   end
 
   def inspect
-    return "JSON File = #{@json_file}"
+    "#{@schema}"
   end
 
   def get_fields(table)
@@ -22,7 +22,7 @@ class Schema
     return fields
   end
 
-  # Pick schema (db, uniteu, rpro, or google_shopping)
+  # Pick schema [db, uniteu, rpro, or google_shopping]
   def which_schema?(type)
     json_file = case type
       when "db" then "leedb/schemas/leedb.json"

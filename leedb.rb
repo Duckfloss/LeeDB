@@ -9,15 +9,19 @@ require 'zip'
 require 'date'
 require 'csv'
 
-# Require Classes
-require 'db'
-require 'record'
-require 'import'
-#require 'export'
-require 'schema'
 
+class Lee
+	# Require subClasses
+	require 'db'
+	require 'record'
+	require 'import'
+	#require 'export'
+	require 'schema'
+end
 
 load './test_data.rb'
+
+$x = Import.new($ufile)
 
 def unzip(file)
 	Zip::File.open(file) do |zip_file|

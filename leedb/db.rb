@@ -1,6 +1,6 @@
 # Interfaces with the lee.db database
 
-class DB
+class DB < Lee
 
   # Open database on object creation
   # db is the name of the database

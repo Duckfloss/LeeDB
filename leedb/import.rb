@@ -1,4 +1,7 @@
-class Import
+class Import < Lee
+
+#require 'pry'
+#    binding.pry
 
   attr_reader :file, :data_source, :source_type, :records, :map, :json, :data, :record_type
 
@@ -15,12 +18,8 @@ class Import
   end
 
   def inspect
-    return "File=\"#{@file.to_s}\""
-#    output = ""
-#    @records.each do |i|
-#      output << "#{i[:pf_id]}\n"
-#    end
-#    return output
+#    return "File=\"#{@file.to_s}\""
+    return @records
   end
 
   # Guess where this data comes from
@@ -73,33 +72,33 @@ class Import
     end
   end
 
-def parse_csv(file)
-  # Initialize array
-  data = []
-  # Break open CSV and go through rows
-  begin
-    data = CSV.read(file, :headers => true,:skip_blanks => true,:header_converters => :symbol, :encoding => 'UTF-8')
-  rescue Exception => e
-    # Convert to UTF-8 if necessary
-    data = CSV.read(file, :headers => true,:skip_blanks => true,:header_converters => :symbol, :encoding => 'Windows-1252:UTF-8')
-  end
-  data
-end
-
-# Creates an Array of Records
-def convert(data)
-  records = []
-  data.each do |row|
-    record = {}
-    @map.each do |k,v|
-      record[v.to_sym] = row[k]
+  def parse_csv(file)
+    # Initialize array
+    data = []
+    # Break open CSV and go through rows
+    begin
+      data = CSV.read(file, :headers => true,:skip_blanks => true,:header_converters => :symbol, :encoding => 'UTF-8')
+    rescue Exception => e
+      # Convert to UTF-8 if necessary
+      data = CSV.read(file, :headers => true,:skip_blanks => true,:header_converters => :symbol, :encoding => 'Windows-1252:UTF-8')
     end
-    records << Record.new(@record_type,record)
+    data
   end
-  records
-end
 
+  # Creates an Array of Records
+  def convert(data)
+    records = []
+    data.each do |row|
+      record = {}
+      @map.each do |k,v|
+        record[v] = row[k]
+      end
+      records << Record.new(@record_type,record)
+    end
+    records
+  end
 
+=begin
   # UniteU data
   class UniteU
 
@@ -283,4 +282,5 @@ end
       end
     end
   end
+=end
 end
