@@ -1,7 +1,7 @@
 # Shared record methods
 class Record < Lee
 
-  attr_reader :type, :fields, :details
+  attr_reader :type, :fields, :details, :uid
 
   # Defines data types in singular and plural
   TYPES = {
@@ -16,9 +16,11 @@ class Record < Lee
   TABLES = TYPES.values
 
   def initialize(type, data = {})
+    @schema = Schema.new("db")
     @type = type
     @data = data
     @details = create_record(TYPES[type])
+    @uid = get_uid(@schema.get_key(TYPES[type]))
   end
 
   # Creates a record object
@@ -27,8 +29,7 @@ class Record < Lee
     if TABLES.find_index(type).nil? # check if type is valid
       raise ArgumentError.new("Must indicate valid Record type")
     else
-      schema = Schema.new("db")
-      @fields = schema.get_fields(type)
+      @fields = @schema.get_fields(type)
       if @data.empty? # Create blank record
         @fields.each do |field|
           details[field] = ""
@@ -42,6 +43,14 @@ class Record < Lee
     details
   end
 
+  def get_uid(key)
+    uid = []
+    key.each do |k|
+      i = { k => @details[k] }
+      uid << i
+    end
+    uid
+  end
 
   def inspect
     output = ""
@@ -57,8 +66,8 @@ class Record < Lee
   end
 
   def send_to_db
-
-
+    db = DB.new
+    
 
   end
 

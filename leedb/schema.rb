@@ -11,7 +11,7 @@ class Schema < Lee
   end
 
   def inspect
-    "#{@schema}"
+    "#{@schema.to_s.slice(0,35)} . . ."
   end
 
   def get_fields(table)
@@ -20,6 +20,10 @@ class Schema < Lee
       fields << field_name.to_s
     end
     return fields
+  end
+
+  def get_key(table)
+    @schema[table.to_sym][:KEY]
   end
 
   # Pick schema [db, uniteu, rpro, or google_shopping]
