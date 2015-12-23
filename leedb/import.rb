@@ -10,8 +10,8 @@ class Import < Lee
     @data_source = guess_source
     @json = JSON.parse(File.read("leedb/maps/#{@data_source}.json"), :symbolize_names=>true)
     @source_type = guess_source_type
-    @record_type = @json[:"#{@source_type}"][:type]
-    @map = @json[:"#{@source_type}"][:fields]
+    @record_type = @json[@source_type.to_sym][:type]
+    @map = @json[@source_type.to_sym][:fields]
     @data = parse_csv(@file)
     @records = convert(@data)
 
