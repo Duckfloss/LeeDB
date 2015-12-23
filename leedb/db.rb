@@ -4,7 +4,7 @@ class DB < Lee
 
   # Open database on object creation
   # db is the name of the database
-  def initialize(db)
+  def initialize(db="Lee.db")
     @db = SQLite3::Database.new "#{db}"
   end
 
@@ -81,7 +81,7 @@ class DB < Lee
       puts "Exception occurred"
       puts e
     end
-  	return uid_exists
+    uid_exists
   end
 
   # Lists the tables in the database
@@ -89,7 +89,7 @@ class DB < Lee
     thesetables = []
     tables = @db.execute "SELECT name FROM sqlite_master WHERE type='table'"
     tables.each { |table| thesetables << table[0] }
-    return thesetables
+    thesetables
   end
 
 
