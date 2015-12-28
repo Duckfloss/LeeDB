@@ -4,7 +4,7 @@ class DB < Lee
 
   # Open database on object creation
   # db is the name of the database
-  def initialize(db="Lee.db")
+  def initialize(db=$database)
     @db = SQLite3::Database.new "#{db}"
   end
 
@@ -29,6 +29,7 @@ class DB < Lee
     rescue SQLite3::Exception => e
       puts "Exception occurred"
       puts e
+      puts "INSERT INTO #{table} (#{keys}) VALUES (#{q})"
     end
   end
 
@@ -46,7 +47,7 @@ class DB < Lee
 		end
 		keys.chomp!(",")
 		uid.each do |k,v|
-      conditions << "#{k}=#{v},"
+      conditions << "#{k}=\"#{v}\","
 		end
 		conditions.chomp!(",")
 		conditions.gsub!(","," AND ")
@@ -80,6 +81,7 @@ class DB < Lee
     rescue SQLite3::Exception => e
       puts "Exception occurred"
       puts e
+      puts "uid_exists? - SELECT * FROM #{table} WHERE #{conditions}"
     end
     uid_exists
   end
@@ -90,6 +92,12 @@ class DB < Lee
     tables = @db.execute "SELECT name FROM sqlite_master WHERE type='table'"
     tables.each { |table| thesetables << table[0] }
     thesetables
+  end
+
+  def close
+    if @db
+      @db.close
+    end
   end
 
 

@@ -18,9 +18,10 @@ class Record < Lee
   def initialize(type, data = {})
     @schema = Schema.new("db")
     @type = type
+    @table = TYPES[type]
     @data = data
-    @details = create_record(TYPES[type])
-    @uid = get_uid(@schema.get_key(TYPES[type]))
+    @details = create_record(@table)
+    @uid = get_uid(@schema.get_key(@table))
   end
 
   # Creates a record object
@@ -44,31 +45,29 @@ class Record < Lee
   end
 
   def get_uid(key)
-    uid = []
+    uid = {}
     key.each do |k|
-      i = { k => @details[k] }
-      uid << i
+      uid[k] = @details[k]
     end
     uid
   end
 
   def inspect
-    output = ""
     if @type.length > 0
       return @details
-#      output << "<@type = #{@type} - "
-#      output << "@details = #{@details.to_s.slice(0,60)}...>\n"
     else
-#      output << "<blank record>\n"
-#    end
-    return output
+      return "<blank record>\n"
     end
   end
 
   def send_to_db
     db = DB.new
-    
-
+    if db.uid_exists?(@table,@uid)
+      db.update(@table, @details, @uid)
+    else
+      db.insert(@table, @details)
+    end
+#    db.close
   end
 
 end
