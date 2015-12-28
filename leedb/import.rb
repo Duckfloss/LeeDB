@@ -1,7 +1,5 @@
 class Import < Lee
 
-#require 'pry'
-#    binding.pry
 
   attr_reader :file, :data_source, :source_type, :records, :map, :json, :data, :record_type
 
@@ -88,12 +86,21 @@ class Import < Lee
   # Creates an Array of Records
   def convert(data)
     records = []
+    meta = []
     data.each do |row|
       record = {}
+      if @record_type == "product_group"
+        meta << { "pf_id" => row[:pf_id] , "category_id" => row[:dept_id] }
+      end
       @map.each do |k,v|
         record[v] = row[k]
       end
       records << Record.new(@record_type,record)
+    end
+    if !meta.empty?
+      meta.each do |record|
+        records << Record.new("product_meta", record)
+      end
     end
     records
   end
