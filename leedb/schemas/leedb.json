@@ -23,7 +23,6 @@
 	"product_groups": {
 		"KEY": ["pf_id"],
 		"FIELDS": {
-			"dept_id": { "type": "INTEGER", "rules": "(NOTNULL)", "format": "int4", "default": null },
 			"pf_id": { "type": "TEXT", "rules": "(KEY-NOTNULL-UNIQUE)", "format": "alpha16", "default": null },
 			"name": { "type": "TEXT", "rules": "(NOTNULL)", "format": null, "default": null },
 			"description": { "type": "TEXT", "rules": null, "format": null, "default": null },
