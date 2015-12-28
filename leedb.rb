@@ -8,6 +8,7 @@ require 'xmlsimple'
 require 'zip'
 require 'date'
 require 'csv'
+require 'pry'
 
 
 class Lee
@@ -21,7 +22,13 @@ end
 
 load './test_data.rb'
 
+$database = "../lee.db"
+
 $x = Import.new($ufile)
+
+$x.records.each do |record|
+	record.send_to_db
+end
 
 def unzip(file)
 	Zip::File.open(file) do |zip_file|
