@@ -42,8 +42,10 @@ class DB < Lee
 		values = []
 		conditions = ""
 		hash.each do |k,v|
-      keys << "#{k}=?,"
-      values << v
+      if !v.nil?
+        keys << "#{k}=?,"
+        values << v
+      end
 		end
 		keys.chomp!(",")
 		uid.each do |k,v|
