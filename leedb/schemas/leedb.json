@@ -24,12 +24,12 @@
 		"KEY": ["pf_id"],
 		"FIELDS": {
 			"pf_id": { "type": "TEXT", "rules": "(KEY-NOTNULL-UNIQUE)", "format": "alpha16", "default": null },
+			"vendor_code": { "type": "TEXT", "rules": null, "format": "char3", "default": null },
 			"name": { "type": "TEXT", "rules": "(NOTNULL)", "format": null, "default": null },
 			"description": { "type": "TEXT", "rules": null, "format": null, "default": null },
 			"msrp_price": { "type": "REAL", "rules": null, "format": "price", "default": null },
 			"list_price": { "type": "REAL", "rules": null, "format": "price", "default": null },
 			"img_thumbnail": { "type": "TEXT", "rules": null, "format": "url", "default": null },
-			"vendor_code": { "type": "TEXT", "rules": null, "format": "char3", "default": null },
 			"sale_price": { "type": "REAL", "rules": null, "format": "price", "default": null },
 			"sale_start": { "type": "TEXT", "rules": null, "format": "date", "default": null },
 			"sale_end": { "type": "TEXT", "rules": null, "format": "date", "default": null },
