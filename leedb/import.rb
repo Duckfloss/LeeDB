@@ -8,15 +8,13 @@ class Import < Lee
     @data_source = guess_source
     @json = JSON.parse(File.read("leedb/maps/#{@data_source}.json"), :symbolize_names=>true)
     @source_type = guess_source_type
-    @record_type = @json[@source_type.to_sym][:type]
-    @map = @json[@source_type.to_sym][:fields]
+    @map = @json[@source_type.to_sym]
     @data = parse_csv(@file)
     @records = convert(@data)
 
   end
 
   def inspect
-#    return "File=\"#{@file.to_s}\""
     return @records
   end
 
@@ -70,8 +68,8 @@ class Import < Lee
     end
   end
 
+  # Creates an Array of CSV Rows
   def parse_csv(file)
-    # Initialize array
     data = []
     # Break open CSV and go through rows
     begin
@@ -86,20 +84,27 @@ class Import < Lee
   # Creates an Array of Records
   def convert(data)
     records = []
-    meta = []
     data.each do |row|
-      record = {}
-      if @record_type == "product_group"
-        meta << { "pf_id" => row[:pf_id] , "category_id" => row[:dept_id] }
-      end
-      @map.each do |k,v|
-        record[v] = row[k]
-      end
-      records << Record.new(@record_type,record)
-    end
-    if !meta.empty?
-      meta.each do |record|
-        records << Record.new("product_meta", record)
+      begin
+        record = {}
+        @map.each do |i|
+          i.each do |k,v|
+            field = k.to_s
+            v = v.split(":")
+            type = v[0]
+            col = v[1]
+            if !record.has_key?(type.to_sym)
+              record[type.to_sym] = {}
+            end
+            record[type.to_sym][col] = row[k]
+          end
+        end
+        # Make Records
+        record.each do |k,v|
+          records << Record.new(k.to_s,v)
+        end
+      rescue Exception => e
+        puts e
       end
     end
     records
