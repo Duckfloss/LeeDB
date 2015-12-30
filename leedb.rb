@@ -1,42 +1,127 @@
+#!/usr/bin/env ruby
+
+# This is the Lee's record import and export script.
+#			-h, --help, Prints help text
+#			-v, --verbose, Verbose
+#			-l, --log, Log output response
+#			-p, --practice, Run without sending to db
+#			-fFILE, --file FILE, Source file (csv,xml, or zip)
+#			-dDB, --db DB, Set alternative sqlite database
+
 # Add leedb to load path
 $LOAD_PATH << "./leedb"
 
 # Require Gems
-require 'sqlite3'
-require 'json'
-require 'xmlsimple'
-require 'zip'
-require 'date'
-require 'csv'
+require 'optparse'
+require 'ostruct'
 require 'pry'
 
-
-class Lee
-	# Require subClasses
-	require 'db'
+	# Requirements
 	require 'record'
-	require 'import'
-	#require 'export'
-	require 'schema'
+#	require 'db'
 
-	# IO messages
-	class IOMessage
-		def initialize
-			@@vmessage = ""
-			@@dbcounter = { :import => 0, :update => 0 }
-		end
+module LeeDB
+
+	def IOMessage
+		IOMessage = {
+			:vmessage => "",
+			:dbcounter => { :import => 0, :update => 0 }
+		}
 	end
-
 end
 
 load './test_data.rb'
 
 $database = "../lee.db"
 
-$x = Import.new($ufile)
+#$w = Lee.new.IOMessage
+$x = Lee::Record::Import.new($ufile)
 
-$x.records.each do |record|
-	record.send_to_db
+#puts Lee.IOMessage
+
+#$x.records.each do |record|
+#	record.send_to_db
+#end
+
+
+
+class Parser
+
+	FORMATS = ["all","t","med","lg","sw"]
+
+	def self.parse(args)
+		options = OpenStruct.new
+		options.format = ["all"]
+		options.eci = false
+		options.source = nil
+		options.dest = nil
+		options.verbose = false
+
+		opt_parser = OptionParser.new do |opt|
+			opt.banner = "Usage: limg.rb [options]"
+			opt.separator ""
+			opt.separator "Options:"
+
+			opt.on("--source SOURCE", "Sets source file or directory", "  default is Downloads/WebAssets") do |source|
+				# Validate source
+				if !File.directory?(source)
+					if File.exist?(source)
+						options.source = { "file"=>source }
+					end
+				else
+					options.source = { "dir"=>source }
+				end
+
+				if options.source.nil?
+					puts "error" #error
+				end
+			end
+
+			opt.separator ""
+
+			opt.on("--dest DEST", "Sets destination directory", "  defaults are R:/RETAIL/IMAGES/4Web", "  and R:/RETAIL/RPRO/Images/Inven") do |dest|
+				if !Dir.exist?(dest)
+					puts "error" #error
+				else
+					options.dest = dest
+				end
+			end
+
+			opt.separator ""
+
+			opt.on("-e", "--eci", "Parses pic(s) to ECI's directory", "  as well as to default or selected destination") do
+				options.eci = true
+			end
+
+			opt.separator ""
+
+			opt.on("-fFORMAT", "--format FORMAT", Array, "Select output formats", "  accepts comma-separated string", "  output sizes are t,sw,med,lg", "  default is \"all\"") do |formats|
+				formats.each do |format|
+					if FORMATS.index(format.downcase).nil?
+						puts "error" #error
+						exit
+					end
+					options.format = formats
+				end
+			end
+
+			opt.separator ""
+
+			opt.on("-v", "--verbose", "Run chattily (or not)", "  default runs not verbosely") do |v|
+				options.verbose = true
+			end
+
+			opt.separator ""
+
+			opt.on_tail("-h","--help","Prints this help") do
+				puts opt
+				exit
+			end
+		end
+
+		opt_parser.parse!(args)
+		options
+	end
 end
 
 def unzip(file)
@@ -143,4 +228,13 @@ def dothething
 			Dir.rmdir(tempdir)
 		end
 	end
+end
+
+# Run Program
+if __FILE__ == $0
+
+	options = Parser.parse(ARGV)
+	#puts options.to_h
+	#Image_Chopper.new(options)
+
 end
