@@ -18,6 +18,15 @@ class Lee
 	require 'import'
 	#require 'export'
 	require 'schema'
+
+	# IO messages
+	class IOMessage
+		def initialize
+			@@vmessage = ""
+			@@dbcounter = { :import => 0, :update => 0 }
+		end
+	end
+
 end
 
 load './test_data.rb'
