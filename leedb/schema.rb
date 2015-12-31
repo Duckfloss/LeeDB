@@ -3,12 +3,12 @@ require 'json'
 module LeeDB
 
 	# Grabs the relevant schema from JSON to hash or array
-	class Schema < Lee
+	class Schema
 
 		attr_reader :schema
 
 		# Load db schema
-		# defaults to db
+		# defaults to db schema
 		def initialize(type="db")
 			@json_file = which_schema?(type)
 			@schema = JSON.parse(File.read(@json_file), :symbolize_names=>true)
@@ -42,7 +42,7 @@ module LeeDB
 		end
 
 		# Builds object attributes
-		def Record.build_attributes(table,data,map)
+		def build_attributes(table,data,map)
 			attributes = Hash.new
 			DB_SCHEMA[:"#{table}"][:FIELDS].each_key do |k|
 				this_map = map.invert["#{k}"]

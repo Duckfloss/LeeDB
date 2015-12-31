@@ -18,12 +18,13 @@ require 'pry'
 
 	# Requirements
 	require 'record'
-#	require 'db'
+	require 'import'
+	require 'db'
 
 module LeeDB
 
 	def IOMessage
-		IOMessage = {
+		iomessage = {
 			:vmessage => "",
 			:dbcounter => { :import => 0, :update => 0 }
 		}
@@ -35,7 +36,7 @@ load './test_data.rb'
 $database = "../lee.db"
 
 #$w = Lee.new.IOMessage
-$x = Lee::Record::Import.new($ufile)
+$x = LeeDB::Import.new($ufile)
 
 #puts Lee.IOMessage
 
