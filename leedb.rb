@@ -11,32 +11,59 @@
 # Add leedb to load path
 $LOAD_PATH << "./leedb"
 
-# Require Gems
+# Gems
 require 'optparse'
 require 'ostruct'
 require 'pry'
 
-	# Requirements
-	require 'record'
-	require 'import'
-	require 'db'
+# Subclasses
+require 'record'
+require 'import'
+require 'db'
 
 module LeeDB
 
-	def IOMessage
-		iomessage = {
-			:vmessage => "",
-			:dbcounter => { :import => 0, :update => 0 }
-		}
+end
+
+class Logger
+
+	attr_reader :iterator, :message, :insert, :update, :fail
+
+	def initialize
+		@iterator = 0
+		@message = []
+		@insert ||= []
+		@update ||= []
+		@fail ||= []
+	end
+
+	def message!(msg)
+		@message << msg
+	end
+
+	def insert!(msg)
+		@insert << msg
+	end
+
+	def update!(msg)
+		@update << msg
+	end
+
+	def fail!(msg)
+		@fail << msg
 	end
 end
+
+$log = Logger.new
 
 load './test_data.rb'
 
 $database = "../lee.db"
 
-#$w = Lee.new.IOMessage
-$x = LeeDB::Import.new($ufile)
+#$w = LeeDB::Record.new("product_group")
+
+
+#$x = LeeDB::Import.new($ufile)
 
 #puts Lee.IOMessage
 
