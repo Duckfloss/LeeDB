@@ -35,22 +35,26 @@ class Logger
 		@insert ||= []
 		@update ||= []
 		@fail ||= []
+		if log == true
+			t = Time.now.strftime("%Y%m%d%H%M%S")
+			@file = File.new("logs/log#{t}.txt", mode="w+")
+		end
 	end
 
 	def message!(msg)
 		@message << msg
 	end
 
-	def insert!(msg)
-		@insert << msg
+	def insert!(table,item)
+		@insert << [table,item]
 	end
 
-	def update!(msg)
-		@update << msg
+	def update!(table,item)
+		@update << [table,item]
 	end
 
-	def fail!(msg)
-		@fail << msg
+	def fail!(table,item)
+		@fail << [table,item]
 	end
 end
 
