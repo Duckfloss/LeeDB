@@ -22,14 +22,11 @@ require 'import'
 require 'db'
 
 module LeeDB
-
-end
-
 class Logger
 
 	attr_reader :iterator, :message, :insert, :update, :fail
 
-	def initialize
+	def initialize(verb,log)
 		@iterator = 0
 		@message = []
 		@insert ||= []
@@ -58,11 +55,14 @@ class Logger
 	end
 end
 
-$log = Logger.new
+end
+
 
 load './test_data.rb'
 
 $database = "../lee.db"
+
+#$log = LeeDB::Logger.new($args[:verbose],$args[:log])
 
 #$w = LeeDB::Record.new("product_group")
 
@@ -75,72 +75,65 @@ $database = "../lee.db"
 #	record.send_to_db
 #end
 
-
-
 class Parser
-
-	FORMATS = ["all","t","med","lg","sw"]
 
 	def self.parse(args)
 		options = OpenStruct.new
-		options.format = ["all"]
-		options.eci = false
-		options.source = nil
-		options.dest = nil
+		options.file = nil
+		options.db = "../lee.db"
+		options.practice = false
 		options.verbose = false
+		options.log = false
 
 		opt_parser = OptionParser.new do |opt|
-			opt.banner = "Usage: limg.rb [options]"
+			opt.banner = "Usage: leedb.rb [options]"
 			opt.separator ""
 			opt.separator "Options:"
 
-			opt.on("--source SOURCE", "Sets source file or directory", "  default is Downloads/WebAssets") do |source|
+			opt.on("-fFILE", "--file FILE", "Source file (csv,xml, or zip)") do |file|
+				if file.nil?
+					puts "We need a file to pull data from."
+				end
 				# Validate source
-				if !File.directory?(source)
-					if File.exist?(source)
-						options.source = { "file"=>source }
-					end
+				if !file =~ /\.(csv|xml|zip){1}$/
+					puts "We need a csv, xml, or zip file. Try again."
+				end
+				if File.exist?(file)
+					options.file = file
 				else
-					options.source = { "dir"=>source }
-				end
-
-				if options.source.nil?
-					puts "error" #error
+					puts "We can't find that file. Try pasting the full file path here."
 				end
 			end
 
 			opt.separator ""
 
-			opt.on("--dest DEST", "Sets destination directory", "  defaults are R:/RETAIL/IMAGES/4Web", "  and R:/RETAIL/RPRO/Images/Inven") do |dest|
-				if !Dir.exist?(dest)
-					puts "error" #error
+			opt.on("-dDB", "--db DB", "Set alternative sqlite database") do |db|
+				if !db =~ /\.db$/
+					puts "Database should be a valid SQLite file. The filename should end in \".db\""
+				end
+				if File.exist?(db)
+					options.db = db
 				else
-					options.dest = dest
+					puts "We can't find that database. Try pasting the full file path here."
 				end
 			end
 
 			opt.separator ""
 
-			opt.on("-e", "--eci", "Parses pic(s) to ECI's directory", "  as well as to default or selected destination") do
-				options.eci = true
+			opt.on("-p", "--practice", "Run without sending to db") do |practice|
+				options.practice = practice
 			end
 
 			opt.separator ""
 
-			opt.on("-fFORMAT", "--format FORMAT", Array, "Select output formats", "  accepts comma-separated string", "  output sizes are t,sw,med,lg", "  default is \"all\"") do |formats|
-				formats.each do |format|
-					if FORMATS.index(format.downcase).nil?
-						puts "error" #error
-						exit
-					end
-					options.format = formats
-				end
+			opt.on("-v", "--verbose", "Run chattily (or not)") do |verbose|
+				options.verbose = verbose
 			end
 
 			opt.separator ""
 
-			opt.on("-v", "--verbose", "Run chattily (or not)", "  default runs not verbosely") do |v|
-				options.verbose = true
+			opt.on("-l", "--log", "Log results to a file") do |log|
+				options.log = log
 			end
 
 			opt.separator ""
@@ -154,6 +147,14 @@ class Parser
 		opt_parser.parse!(args)
 		options
 	end
+end
+
+options = Parser.parse($args)
+puts options
+
+if __FILE__ == $0
+	#options = Parser.parse(ARGV)
+	#puts options.to_h
 end
 
 def unzip(file)
@@ -260,13 +261,4 @@ def dothething
 			Dir.rmdir(tempdir)
 		end
 	end
-end
-
-# Run Program
-if __FILE__ == $0
-
-	options = Parser.parse(ARGV)
-	#puts options.to_h
-	#Image_Chopper.new(options)
-
 end
