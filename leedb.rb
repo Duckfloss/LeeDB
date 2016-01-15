@@ -9,41 +9,25 @@
 #			-h, --help, Prints help text
 
 # Add leedb to load path
-$LOAD_PATH << "./leedb"
+$LOAD_PATH << "./"
 
 # Gems
-require 'optparse'
-require 'ostruct'
+require 'pry'
 
 # Subclasses
-require 'record'
-require 'import'
-require 'db'
-require 'parser'
+require 'leedb/record'
+require 'leedb/import'
+require 'leedb/db'
+require 'leedb/parser'
+require 'leedb/logger'
 
-load './test_data.rb'
+load 'test_data.rb'
 
 module LeeDB
 
 end
 
 
-# >>> TEMP STUFF
-options = Lee::Parser.parse($args)
-puts options.to_h
-$options = options
-$log = LeeDB::Logger.new(options)
-
-$x = LeeDB::Import.new(options.file)
-
-
-#$w = LeeDB::Record.new("product_group")
-
-#$x.records.each do |record|
-#	record.send_to_db
-#end
-
-#>>>> END OF TEMP STUFF
 
 
 # Run script

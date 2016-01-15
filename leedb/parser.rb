@@ -1,4 +1,7 @@
-Module Lee
+require 'optparse'
+require 'ostruct'
+
+module LeeDB
   class Parser
 
   	def self.parse(args)

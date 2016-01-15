@@ -2,7 +2,7 @@ require 'xmlsimple'
 require 'zip'
 #require 'date'
 require 'csv'
-require 'schema'
+require 'leedb/schema'
 
 module LeeDB
 

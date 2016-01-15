@@ -1,5 +1,5 @@
 require 'sqlite3'
-require 'schema'
+require 'leedb/schema'
 
 # Interfaces with the lee.db database
 module LeeDB
