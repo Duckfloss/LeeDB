@@ -9,8 +9,7 @@ ehthumbs.db
 
 #mine
 *.db-journal
-dothething.rb
-test_data.rb
+test.rb
 lee.db
 /logs
 /data

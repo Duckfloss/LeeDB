@@ -21,7 +21,6 @@ require 'leedb/db'
 require 'leedb/parser'
 require 'leedb/logger'
 
-load 'test_data.rb'
 
 module LeeDB
 
