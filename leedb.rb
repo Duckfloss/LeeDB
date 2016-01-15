@@ -1,12 +1,12 @@
 #!/usr/bin/env ruby
 
 # This is the Lee's record import and export script.
-#			-h, --help, Prints help text
-#			-v, --verbose, Verbose
-#			-l, --log, Log output response
-#			-p, --practice, Run without sending to db
 #			-fFILE, --file FILE, Source file (csv,xml, or zip)
 #			-dDB, --db DB, Set alternative sqlite database
+#			-p, --practice, Run without sending to db
+#			-v, --verbose, Verbose
+#			-l, --log, Log output response
+#			-h, --help, Prints help text
 
 # Add leedb to load path
 $LOAD_PATH << "./leedb"
@@ -21,59 +21,74 @@ require 'record'
 require 'import'
 require 'db'
 
-module LeeDB
-class Logger
-
-	attr_reader :iterator, :message, :insert, :update, :fail
-
-	def initialize(verb,log)
-		@iterator = 0
-		@message = []
-		@insert ||= []
-		@update ||= []
-		@fail ||= []
-		if log == true
-			t = Time.now.strftime("%Y%m%d%H%M%S")
-			@file = File.new("logs/log#{t}.txt", mode="w+")
-		end
-	end
-
-	def message!(msg)
-		@message << msg
-	end
-
-	def insert!(table,item)
-		@insert << [table,item]
-	end
-
-	def update!(table,item)
-		@update << [table,item]
-	end
-
-	def fail!(table,item)
-		@fail << [table,item]
-	end
-end
-
-end
-
-
 load './test_data.rb'
 
-$database = "../lee.db"
+module LeeDB
+	class Logger
 
-#$log = LeeDB::Logger.new($args[:verbose],$args[:log])
+		attr_reader :iterator, :message, :insert, :update, :fail
 
-#$w = LeeDB::Record.new("product_group")
+		def initialize(options)
+			@iterator = 0
+			@message = []
+			@insert ||= []
+			@update ||= []
+			@fail ||= []
+			if options.log
+				t = Time.now.strftime("%Y%m%d%H%M%S")
+				@log = File.new("logs/log#{t}.txt", mode="w+")
+			end
+		end
 
+		def message!(msg)
+			@message << msg
+		end
 
-#$x = LeeDB::Import.new($ufile)
+		def insert!(table,item)
+			@insert << [table,item]
+		end
 
-#puts Lee.IOMessage
+		def update!(table,item)
+			@update << [table,item]
+		end
 
-#$x.records.each do |record|
-#	record.send_to_db
-#end
+		def fail!(table,item)
+			@fail << [table,item]
+		end
+
+		def increment
+			@iterator += 1
+		end
+
+		def write_interstitial
+			output = ""
+			@message.each do |message|
+				output << "#{message}\n"
+			end
+			if options.verbose
+				puts output
+			end
+			if options.log
+				@log.write(output)
+			end
+		end
+
+		def write_end
+			output = ""
+			insert_number = @insert.length
+			update_number = @update.length
+			output << "Records inserted: #{insert_number}\n"
+			output << "Records updated: #{update_number}\n"
+			if @fail.length > 0
+				output << "The following items couldn't be put in the database:\n"
+				@fail.each do |item|
+					output << "\t#{item[1]} - #{item[0]}\n"
+				end
+			end
+
+		end
+	end
+end
 
 class Parser
 
@@ -149,12 +164,35 @@ class Parser
 	end
 end
 
-options = Parser.parse($args)
-puts options
 
+
+# >>> TEMP STUFF
+binding.pry
+options = Parser.parse($args)
+puts options.to_h
+$options = options
+$log = LeeDB::Logger.new(options)
+
+$x = LeeDB::Import.new(options.file)
+
+
+#$w = LeeDB::Record.new("product_group")
+
+#$x.records.each do |record|
+#	record.send_to_db
+#end
+
+#>>>> END OF TEMP STUFF
+
+
+# Run script
+=begin
 if __FILE__ == $0
-	#options = Parser.parse(ARGV)
-	#puts options.to_h
+	# Parse arguments
+	options = Parser.parse(ARGV)
+
+	# Initialize logging
+	$log = LeeDB::Logger.new(options)
 end
 
 def unzip(file)
@@ -166,7 +204,7 @@ def unzip(file)
 		end
 	end
 end
-
+=end
 
 # guesstype(filename)
 #

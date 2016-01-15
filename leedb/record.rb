@@ -5,7 +5,7 @@ require 'csv'
 require 'schema'
 
 module LeeDB
-# Shared record methods
+
 	class Record
 
 		attr_reader :type, :fields, :details, :uid
