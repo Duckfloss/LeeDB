@@ -14,7 +14,6 @@ $LOAD_PATH << "./leedb"
 # Gems
 require 'optparse'
 require 'ostruct'
-require 'pry'
 
 # Subclasses
 require 'record'
@@ -167,7 +166,6 @@ end
 
 
 # >>> TEMP STUFF
-binding.pry
 options = Parser.parse($args)
 puts options.to_h
 $options = options
