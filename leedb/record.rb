@@ -23,9 +23,9 @@ class Record
 	TABLES = TYPES.values
 
 	def initialize(type, data = {})
-		@schema = Schema.new("db")
 		@type = type
 		@table = TYPES[type]
+		@schema = Schema.new("db",@table)
 		@data = data
 		@details = create_record(@table)
 		@uid = get_uid(@schema.get_key(@table))
@@ -37,7 +37,7 @@ class Record
 		if TABLES.find_index(type).nil? # check if type is valid
 			raise ArgumentError.new("Must indicate valid Record type")
 		else
-			@fields = @schema.get_fields(type)
+			@fields = @schema.get_fields
 			if @data.empty? # Create blank record
 				@fields.each do |field|
 					details[field] = ""

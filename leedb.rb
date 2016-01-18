@@ -11,9 +11,6 @@
 # Add leedb to load path
 $LOAD_PATH << "./"
 
-# Gems
-require 'pry'
-
 # Subclasses
 require 'leedb/record'
 require 'leedb/import'

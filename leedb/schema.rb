@@ -9,25 +9,26 @@ class Schema
 
 	# Load db schema
 	# defaults to db schema
-	def initialize(type="db")
+	def initialize(type="db",table)
 		@json_file = which_schema?(type)
-		@schema = JSON.parse(File.read(@json_file), :symbolize_names=>true)
+		schema = JSON.parse(File.read(@json_file), :symbolize_names=>true)
+		@schema = schema[table.to_sym]
 	end
 
 	def inspect
 		"#{@schema.to_s.slice(0,35)} . . ."
 	end
 
-	def get_fields(table)
+	def get_fields
 		fields = []
-		@schema[:"#{table}"][:FIELDS].each_key do |field_name|
+		@schema[:FIELDS].each_key do |field_name|
 			fields << field_name.to_s
 		end
 		return fields
 	end
 
 	def get_key(table)
-		@schema[table.to_sym][:KEY]
+		@schema[:KEY]
 	end
 
 	# Pick schema [db, uniteu, rpro, or google_shopping]
