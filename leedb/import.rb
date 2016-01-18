@@ -2,172 +2,172 @@ require 'json'
 
 module LeeDB
 
-	class Import
+class Import
 
 
-		attr_reader :file, :data_source, :source_type, :records, :map, :data, :record_type
+	attr_reader :file, :data_source, :source_type, :records, :map, :data, :record_type
 
-		def initialize(file)
-			@file = file
-			@data_source = guess_source
-			@json = JSON.parse(File.read("leedb/maps/#{@data_source}.json"), :symbolize_names=>true)
-			@source_type = guess_source_type
-			@map = @json[@source_type.to_sym]
-			@data = parse_csv(@file)
-			@records = convert(@data)
+	def initialize(file)
+		@file = file
+		@data_source = guess_source
+		@json = JSON.parse(File.read("leedb/maps/#{@data_source}.json"), :symbolize_names=>true)
+		@source_type = guess_source_type
+		@map = @json[@source_type.to_sym]
+		@data = parse_csv(@file)
+		@records = convert(@data)
 
+	end
+
+	def inspect
+		return @records
+	end
+
+	# Guess where this data comes from
+	def guess_source
+		# Typically csv files come from UniteU
+		if @file =~ /\.csv$/ then return source = "uniteu"
+		# While xml files come from RPro
+		elsif @file =~ /\.xml$/ then return source = "rpro"
+		# Otherwise toss out an error
+		else
+			raise "Error: No map exists"
 		end
+	end
 
-		def inspect
-			return @records
-		end
-
-		# Guess where this data comes from
-		def guess_source
-			# Typically csv files come from UniteU
-			if @file =~ /\.csv$/ then return source = "uniteu"
-			# While xml files come from RPro
-			elsif @file =~ /\.xml$/ then return source = "rpro"
-			# Otherwise toss out an error
-			else
-				raise "Error: No map exists"
-			end
-		end
-
-		# Guess the record type based on source and file name
-		def guess_source_type
-			table = ""
-			if @data_source == "uniteu"
-				@json[:tables].each do |t|
-					if @file.downcase.match(t)
-						table << t
-					end
+	# Guess the record type based on source and file name
+	def guess_source_type
+		table = ""
+		if @data_source == "uniteu"
+			@json[:tables].each do |t|
+				if @file.downcase.match(t)
+					table << t
 				end
-			elsif @source == "rpro"
-				## TODO
 			end
-			table
+		elsif @source == "rpro"
+			## TODO
 		end
+		table
+	end
 
-		# Validate field data
-		def validate(string, format)
-			# validation patterns
-			formats = {
-				"alpha16" => /\A[a-zA-Z]{16}\Z/,
-				"char3" => /\A[\w\d\ \+\.\&]{2,3}\Z/,
-				"int4" => /\A\d{4}\Z/,
-				"price" => /\A[\d\.]+\Z/,
-				"bool" => /\A(0|1|no|yes|true|false)\Z/,
-				"url" => /\A[\d\w]+\.+[\w]{1,4}\Z/,
-				"date" => /\A\d{2}\/\d{2}\/\d{2}\Z/,
-				"time" => /\A\d{2}\:\d{2}\:\d{2}\ (A|P)M\Z/,
-				"phone" => /\A[\d\-\(\)\.]+\Z/,
-				"email" => /\A[\w\d\.\#-\_\~\$\&\'\(\)\*\+\,\;\=\:\%]+\@[\w\d]+\.\w{1,4}\Z/
-			}
-			if string == " " || string == nil
-				return false
-			else
-				format = formats["#{format}"]
-				return !string.to_s[format].nil?
-			end
+	# Validate field data
+	def validate(string, format)
+		# validation patterns
+		formats = {
+			"alpha16" => /\A[a-zA-Z]{16}\Z/,
+			"char3" => /\A[\w\d\ \+\.\&]{2,3}\Z/,
+			"int4" => /\A\d{4}\Z/,
+			"price" => /\A[\d\.]+\Z/,
+			"bool" => /\A(0|1|no|yes|true|false)\Z/,
+			"url" => /\A[\d\w]+\.+[\w]{1,4}\Z/,
+			"date" => /\A\d{2}\/\d{2}\/\d{2}\Z/,
+			"time" => /\A\d{2}\:\d{2}\:\d{2}\ (A|P)M\Z/,
+			"phone" => /\A[\d\-\(\)\.]+\Z/,
+			"email" => /\A[\w\d\.\#-\_\~\$\&\'\(\)\*\+\,\;\=\:\%]+\@[\w\d]+\.\w{1,4}\Z/
+		}
+		if string == " " || string == nil
+			return false
+		else
+			format = formats["#{format}"]
+			return !string.to_s[format].nil?
 		end
+	end
 
-		# Creates an Array of CSV Rows
-		def parse_csv(file)
-			data = []
-			# Break open CSV and go through rows
+	# Creates an Array of CSV Rows
+	def parse_csv(file)
+		data = []
+		# Break open CSV and go through rows
+		begin
+			data = CSV.read(file, :headers => true,:skip_blanks => true,:header_converters => :symbol, :encoding => 'UTF-8')
+		rescue Exception => e
+			# Convert to UTF-8 if necessary
+			data = CSV.read(file, :headers => true,:skip_blanks => true,:header_converters => :symbol, :encoding => 'Windows-1252:UTF-8')
+		end
+		data
+	end
+
+	# Creates an Array of Records
+	def convert(data)
+		records = []
+		data.each do |row|
 			begin
-				data = CSV.read(file, :headers => true,:skip_blanks => true,:header_converters => :symbol, :encoding => 'UTF-8')
-			rescue Exception => e
-				# Convert to UTF-8 if necessary
-				data = CSV.read(file, :headers => true,:skip_blanks => true,:header_converters => :symbol, :encoding => 'Windows-1252:UTF-8')
-			end
-			data
-		end
-
-		# Creates an Array of Records
-		def convert(data)
-			records = []
-			data.each do |row|
-				begin
-					record = {}
-					@map.each do |i|
-						i.each do |k,v|
-							field = k.to_s
-							v = v.split(":")
-							type = v[0]
-							col = v[1]
-							if !record.has_key?(type.to_sym)
-								record[type.to_sym] = {}
-							end
-							record[type.to_sym][col] = row[k]
+				record = {}
+				@map.each do |i|
+					i.each do |k,v|
+						field = k.to_s
+						v = v.split(":")
+						type = v[0]
+						col = v[1]
+						if !record.has_key?(type.to_sym)
+							record[type.to_sym] = {}
 						end
+						record[type.to_sym][col] = row[k]
 					end
-					# Make Records
-					record.each do |k,v|
-						records << Record.new(k.to_s,v)
-					end
-				rescue Exception => e
-					puts e
 				end
+				# Make Records
+				record.each do |k,v|
+					records << Record.new(k.to_s,v)
+				end
+			rescue Exception => e
+				puts e
 			end
-			records
 		end
+		records
+	end
 
 =begin
-def unzip(file)
-	Zip::File.open(file) do |zip_file|
-		# Handle entries one by one
-		zip_file.each do |entry|
-			# Extract to file/directory/symlink
-			puts "Extracting #{entry.name}"
-		end
-	end
-end
-
-
-# guesstype(filename)
-#
-# What type of data is this? This method will tell you
-# based on what the filename is.
-def guesstype(filename)
-	type = case filename
-		when /^A/ then "salesorders"
-		when /^G/ then "images"
-		when /^N/ then "products"
-		when /^S/ then "customer"
-		when /^X/ then "prefs"
-		else "unknown"
-	end
-end
-
-
-# extractZip(zip)
-#
-#
-def extractZip(zip)
-	temp_dir = "#{File.dirname(zip)}/tmp"
-	type = guesstype(zip)
-
-	# if temp directory doesn't exist, make it
-	if !Dir.exist?(temp_dir)
-		Dir.mkdir(temp_dir)
-	end
-
-	Zip::File.open(zip) do |zip_file|
-		zip_file.glob("*.xml").each do |xml_file|
-			destination = "#{temp_dir}/#{xml_file}"
-			xml_file.extract(destination)
+	def unzip(file)
+		Zip::File.open(file) do |zip_file|
+			# Handle entries one by one
+			zip_file.each do |entry|
+				# Extract to file/directory/symlink
+				puts "Extracting #{entry.name}"
+			end
 		end
 	end
 
-	#then parse files
-	Dir.foreach(temp_dir) do |xml_file|
-		fromxml(xml_file,type)
+
+	# guesstype(filename)
+	#
+	# What type of data is this? This method will tell you
+	# based on what the filename is.
+	def guesstype(filename)
+		type = case filename
+			when /^A/ then "salesorders"
+			when /^G/ then "images"
+			when /^N/ then "products"
+			when /^S/ then "customer"
+			when /^X/ then "prefs"
+			else "unknown"
+		end
 	end
-	#then delete tempdirectory
-#	Dir.rmdir(tempdir)
-end
+
+
+	# extractZip(zip)
+	#
+	#
+	def extractZip(zip)
+		temp_dir = "#{File.dirname(zip)}/tmp"
+		type = guesstype(zip)
+
+		# if temp directory doesn't exist, make it
+		if !Dir.exist?(temp_dir)
+			Dir.mkdir(temp_dir)
+		end
+
+		Zip::File.open(zip) do |zip_file|
+			zip_file.glob("*.xml").each do |xml_file|
+				destination = "#{temp_dir}/#{xml_file}"
+				xml_file.extract(destination)
+			end
+		end
+
+		#then parse files
+		Dir.foreach(temp_dir) do |xml_file|
+			fromxml(xml_file,type)
+		end
+		#then delete tempdirectory
+	#	Dir.rmdir(tempdir)
+	end
 
 
 def dothething
@@ -407,5 +407,5 @@ end
 			end
 		end
 =end
-	end
+end
 end
