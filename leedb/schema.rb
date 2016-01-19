@@ -101,9 +101,9 @@ class Schema
 			end
 		end
 
-		if !rules.nil? && rules.include?("UNIQUE")
-			return -1
-		end
+#		if !rules.nil? && rules.include?("UNIQUE")
+#			return -1
+#		end
 
 		valid
 	end

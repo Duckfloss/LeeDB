@@ -72,12 +72,19 @@ class Record
 	end
 
 	def send_to_db
+		# Validate first
+		@details.each do |k,v|
+			if !valid?(v,k)
+				return 0
+			end
+		end
 		db = DB.new
 		if db.uid_exists?(@table,@uid)
 			db.update(@table, @details, @uid)
 		else
 			db.insert(@table, @details)
 		end
+		return 1
 #		db.close
 	end
 
