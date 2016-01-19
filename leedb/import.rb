@@ -49,29 +49,6 @@ class Import
 		table
 	end
 
-	# Validate field data
-	def validate(string, format)
-		# validation patterns
-		formats = {
-			"alpha16" => /\A[a-zA-Z]{16}\Z/,
-			"char3" => /\A[\w\d\ \+\.\&]{2,3}\Z/,
-			"int4" => /\A\d{4}\Z/,
-			"price" => /\A[\d\.]+\Z/,
-			"bool" => /\A(0|1|no|yes|true|false)\Z/,
-			"url" => /\A[\d\w]+\.+[\w]{1,4}\Z/,
-			"date" => /\A\d{2}\/\d{2}\/\d{2}\Z/,
-			"time" => /\A\d{2}\:\d{2}\:\d{2}\ (A|P)M\Z/,
-			"phone" => /\A[\d\-\(\)\.]+\Z/,
-			"email" => /\A[\w\d\.\#-\_\~\$\&\'\(\)\*\+\,\;\=\:\%]+\@[\w\d]+\.\w{1,4}\Z/
-		}
-		if string == " " || string == nil
-			return false
-		else
-			format = formats["#{format}"]
-			return !string.to_s[format].nil?
-		end
-	end
-
 	# Creates an Array of CSV Rows
 	def parse_csv(file)
 		data = []

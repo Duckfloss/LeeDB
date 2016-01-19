@@ -67,6 +67,10 @@ class Record
 		end
 	end
 
+	def valid?(data,field)
+		@schema.valid?(data,field)
+	end
+
 	def send_to_db
 		db = DB.new
 		if db.uid_exists?(@table,@uid)
