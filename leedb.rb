@@ -14,7 +14,6 @@ $LOAD_PATH << "./"
 # Subclasses
 require 'leedb/record'
 require 'leedb/import'
-require 'leedb/db'
 require 'leedb/parser'
 require 'leedb/logger'
 
