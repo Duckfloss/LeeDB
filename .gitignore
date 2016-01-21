@@ -11,6 +11,7 @@ ehthumbs.db
 *.db-journal
 test.rb
 lee.db
+/leedb/db.rb
 /logs
 /data
 
