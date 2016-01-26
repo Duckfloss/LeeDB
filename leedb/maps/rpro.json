@@ -1,42 +1,125 @@
 {
-	"tables": [
-		"product_groups",
-		"product_items"
-	],
-	"Style": {
-		"Item": {
-			"fldItemNum": "",
-			"fldItemSID": "",
-			"fldALU": "",
-			"fldTotOnHnd": "",
-			"fldCost": "",
-			"fldAttr": "",
-			"fldUDF0": "",
-			"fldSize": "",
-			"AvailQuantity": "",
-			"Availability": ""
-		},
-		"fldStyleSID": "",
-		"fldDCS": "",
-		"fldDCSName": "",
-		"fldVendorCode": "",
-		"fldDesc1": "",
-		"fldDesc2": "",
-		"fldStyleName": "",
-		"fldStyleLongDesc": "",
-		"fldAvailAtStore": "",
-		"fldInStockMsg": "",
-		"fldOutStockMsg": "",
-		"fldTaxCd": "",
-		"fldAvailThreshold": "",
-		"fldVendor": "",
-		"fldInStockMsg_i": "",
-		"fldTaxCd_i": "",
-		"fldStylePicture": "",
-		"fldStyleThumbnail": "",
-		"fldAvailDateFormat": ""
+	"SO": {
+		"SALEORDERS": {
+			"SO": {
+				"SO_ITEM": {
+					"Number": "order_items:sku",
+					"SID": "",
+					"QtyShipped": "order_items:quantity",
+					"ShipDate": "shipping:ship_date",
+					"ShipNumber": "shipping:tracking_id",
+					"ShipDescript": "",
+					"ShipProvider": "shipping:carrier"
+				},
+				"RECEIPT": {
+					"RECEIPT_ITEM": {
+						"Number": "",
+						"SID": "",
+						"Qty": "",
+						"ExtPrc": "order_items:price_item",
+						"ExtPWT": ""
+					},
+					"Number": "",
+					"SID": "",
+					"StoreStation": "",
+					"Date": "",
+					"Subtotal": "",
+					"ShipAmount": "orders:price_shipping",
+					"FeeAmount": "",
+					"TaxArea": "",
+					"TotalTax": "orders:price_tax",
+					"Total": "",
+					"ReceiptType": ""
+				},
+				"Number": "<sku>",
+				"SID": "",
+				"Status": "",
+				"Total": "orders:price_total",
+				"CaptureFund": "orders:payment_processed"
+			}
+		}
 	},
-	"Style_Avail": {
-		
+	"CatTree": {
+		"Category_Tree": {
+			"TreeNode": {
+				"Style": {
+					"SID": "",
+					"OrderNo": ""
+				},
+				"SID": "",
+				"Caption": "",
+				"OrderNo": "",
+				"ShortDesc": "",
+				"Thumbnail": ""
+			}
+		}
+	},
+	"ECStyle": {
+		"Inventory": {
+			"Style": {
+				"Item": {
+					"Price": {
+						"Level": "",
+						"Value": "product_items:price"
+					},
+					"fldItemNum": "<sku>",
+					"fldItemSID": "",
+					"fldALU": "",
+					"fldTotOnHnd": "",
+					"fldCost": "product_items:cost",
+					"fldAttr": "product_items:attr_value2",
+					"fldUDF0": "",
+					"fldSize": "product_items:attr_value1",
+					"AvailQuantity": "product_items:quantity",
+					"Availability": ""
+				},
+				"fldStyleSID": "<pf_id>",
+				"fldDCS": "",
+				"fldDCSName": "",
+				"fldVendorCode": "product_groups:vendor_code",
+				"fldDesc1": "product_items:order_code",
+				"fldDesc2": "",
+				"fldStyleName": "product_groups:name",
+				"fldStyleLongDesc": "product_groups:description",
+				"fldAvailAtStore": "",
+				"fldInStockMsg": "",
+				"fldOutStockMsg": "",
+				"fldTaxCd": "",
+				"fldAvailThreshold": "",
+				"fldVendor": "",
+				"fldInStockMsg_i": "",
+				"fldTaxCd_i": "",
+				"fldStylePicture": "",
+				"fldStyleThumbnail": "",
+				"fldAvailDateFormat": ""
+			},
+			"Style_Avail": {
+				"Item_Avail": {
+					"fldItemNum": "<sku>",
+					"fldItemSID": "",
+					"AvailQuantity": "product_items:quantity",
+					"Availability": ""
+				},
+				"fldStyleSID":"<pf_id>"
+			}
+		}
+	},
+	"ECCustomer": {
+		"Customers": {
+			"Customer": {
+				"fldCustSID": "cusomters:rpro_id",
+				"fldFName": "customers:first_name",
+				"fldLName": "customers:last_name",
+				"fldAddr1": "customers:street1",
+				"fldAddr2": "",
+				"fldAddr3": "!customers:city/customers:state/customers:country",
+				"fldZIP": "customers:zip",
+				"fldPhone1": "customers:phone",
+				"fldCustID": "",
+				"fldCompany": "",
+				"web_cust_sid": "customers:id",
+				"email": "customers:email"
+			}
+		}
 	}
 }
