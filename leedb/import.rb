@@ -19,10 +19,11 @@ class Import
 			@data = parse_csv(@file)
 		elsif @data_source == "rpro"
 			@data = parse_xml(@file)
+#binding.pry
 		else
 			raise "error"
 		end
-		@records = convert(@data)
+#		@records = convert(@data)
 
 	end
 
@@ -52,7 +53,7 @@ class Import
 				end
 			end
 		elsif @data_source == "rpro"
-			type = case @file
+			type = case File.basename(@file)
 				when /^SO/ then table << "SO"
 				when /^ECStyle/ then table << "ECStyle"
 				when /^ECCustomer/ then table << "ECCustomer"
@@ -82,10 +83,9 @@ class Import
 		data = []
 		# Break open CSV and go through rows
 		begin
-			data = CSV.read(file, :headers => true,:skip_blanks => true,:header_converters => :symbol, :encoding => 'UTF-8')
+			data = XmlSimple.xml_in(file)
 		rescue Exception => e
-			# Convert to UTF-8 if necessary
-			data = CSV.read(file, :headers => true,:skip_blanks => true,:header_converters => :symbol, :encoding => 'Windows-1252:UTF-8')
+			puts e
 		end
 		data
 	end
