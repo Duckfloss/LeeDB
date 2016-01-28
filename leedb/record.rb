@@ -1,7 +1,4 @@
-require 'xmlsimple'
-require 'zip'
 require 'sqlite3'
-require 'csv'
 require 'leedb/schema'
 
 module LeeDB

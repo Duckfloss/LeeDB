@@ -1,4 +1,6 @@
 require 'json'
+require 'xmlsimple'
+require 'csv'
 
 module LeeDB
 
@@ -13,7 +15,13 @@ class Import
 		@json = JSON.parse(File.read("leedb/maps/#{@data_source}.json"), :symbolize_names=>true)
 		@source_type = guess_source_type
 		@map = @json[@source_type.to_sym]
-		@data = parse_csv(@file)
+		if @data_source == "uniteu"
+			@data = parse_csv(@file)
+		elsif @data_source == "rpro"
+			@data = parse_xml(@file)
+		else
+			raise "error"
+		end
 		@records = convert(@data)
 
 	end
@@ -43,8 +51,15 @@ class Import
 					table << t
 				end
 			end
-		elsif @source == "rpro"
-			## TODO
+		elsif @data_source == "rpro"
+			type = case @file
+				when /^SO/ then table << "SO"
+				when /^ECStyle/ then table << "ECStyle"
+				when /^ECCustomer/ then table << "ECCustomer"
+				when /^CUST/ then table << "CUST"
+				when /^CatTree/ then table << "CatTree"
+				else table << "unknown"
+			end
 		end
 		table
 	end
@@ -61,6 +76,20 @@ class Import
 		end
 		data
 	end
+
+	# Creates an Array of XML Rows
+	def parse_xml(file)
+		data = []
+		# Break open CSV and go through rows
+		begin
+			data = CSV.read(file, :headers => true,:skip_blanks => true,:header_converters => :symbol, :encoding => 'UTF-8')
+		rescue Exception => e
+			# Convert to UTF-8 if necessary
+			data = CSV.read(file, :headers => true,:skip_blanks => true,:header_converters => :symbol, :encoding => 'Windows-1252:UTF-8')
+		end
+		data
+	end
+
 
 	# Creates an Array of Records
 	def convert(data)
@@ -92,17 +121,6 @@ class Import
 	end
 
 =begin
-	def unzip(file)
-		Zip::File.open(file) do |zip_file|
-			# Handle entries one by one
-			zip_file.each do |entry|
-				# Extract to file/directory/symlink
-				puts "Extracting #{entry.name}"
-			end
-		end
-	end
-
-
 	# guesstype(filename)
 	#
 	# What type of data is this? This method will tell you
@@ -119,141 +137,6 @@ class Import
 	end
 
 
-	# extractZip(zip)
-	#
-	#
-	def extractZip(zip)
-		temp_dir = "#{File.dirname(zip)}/tmp"
-		type = guesstype(zip)
-
-		# if temp directory doesn't exist, make it
-		if !Dir.exist?(temp_dir)
-			Dir.mkdir(temp_dir)
-		end
-
-		Zip::File.open(zip) do |zip_file|
-			zip_file.glob("*.xml").each do |xml_file|
-				destination = "#{temp_dir}/#{xml_file}"
-				xml_file.extract(destination)
-			end
-		end
-
-		#then parse files
-		Dir.foreach(temp_dir) do |xml_file|
-			fromxml(xml_file,type)
-		end
-		#then delete tempdirectory
-	#	Dir.rmdir(tempdir)
-	end
-
-
-def dothething
-	# Open the database
-	db = DB.new($db)
-
-	zipdir = "/Users/benjones/Documents/Projects/Lees/LeeDB/data/zips"
-	# get a list of files from $dir
-	zips = Dir.entries(zipdir).keep_if{|v| v=~/zip/}
-
-	# We're only bringing in items right now
-	# Each zip file
-	zips.each do |zip|
-		# Full file path
-		thiszip = zipdir+"/"+zip
-		# Unzip
-		Zip::File.open(thiszip) do |unzipped|
-			# Make a temporary directory
-			tempdir = thiszip.slice(0,thiszip.index("."))
-			Dir.mkdir(tempdir)
-			# Find just the xmls
-			unzipped.glob("*.xml").each do |file|
-				# Find just the product data
-				if file.name.include?("ECStyle")
-					# Extract product data file to the temp directory
-					thisfile = tempdir+"/"+file.name
-					file.extract(thisfile)
-					# Make an RProRecord with this product data
-					records = RProRecord.new(thisfile)
-					records.Products.each do |table,record_group|
-						if !record_group[0].nil?
-							record_group.each do |record|
-
-								# Check if the UID exists
-								uid = {}
-								keys = $db_schema[:"#{table}"][:KEY]
-								keys.each { |key| uid["#{key}"] = record["#{key}"] }
-								if db.uid_exists?(table,uid)
-									db.update(table,record,uid)
-								else
-									db.insert(table,record)
-								end
-							end
-						end
-					end
-					File.delete(thisfile)
-				end
-			end
-			Dir.rmdir(tempdir)
-		end
-	end
-end
-
-
-
-		# UniteU data
-		class UniteU
-
-			# Chooses and creates Record
-			def create_record(table,data)
-				record = case table
-					when "product_items" then ProductItem.new(data)
-					when "product_groups" then ProductGroup.new(data)
-					when "orders" then Order.new(data)
-					when "order_items" then OrderItem.new(data)
-					when "customers" then Customer.new(data)
-					when "categories" then Category.new(data)
-					else "unknown"
-				end
-			end
-
-
-			def parse_csv(file)
-				puts "file" # REMOVE THIS <<<<<<<<
-				# Guess what kind of file it is
-				$csv_table = guess_source_type(file)
-				# Load corresponding schema
-				$db_table = $map[:"#{$csv_table}"][:table]
-				$this_map = build_map($csv_table)
-				$this_schema = $db_schema[:"#{$db_table}"]
-				key = $this_schema[:KEY]
-				key = key.split("-") if key.match("-")
-
-				# Break it open and go through rows
-				rows = CSV.read(file, :headers => true,:skip_blanks => true,:header_converters => :symbol)
-
-				# To count rows
-				rowno = 1
-				rows.each do |row|
-					# Variable switch will tell us if this row is trash
-			#		trash = false
-					rowno += 1 # Iterate row
-					puts "#{rowno}..." # REMOVE THIS <<<<<<<<
-					# Creates record object
-					record = create_record($db_table,row)
-
-					# This just splits out "product_groups" so we can categorize
-					# in another table
-					if $db_table!="product_groups"
-						send_to_db(record)
-					else
-						send_to_db(record)
-						if !record.getCat[0].nil?
-							send_cat_to_db(record.getCat)
-						end
-					end
-				end
-			end
-		end
 
 
 		# RPro data
