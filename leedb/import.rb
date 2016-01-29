@@ -82,7 +82,7 @@ class Import
 		data = []
 		# Break open CSV and go through rows
 		begin
-			data = XmlSimple.xml_in(file, {'ForceArray'=>'true', 'KeepRoot'=>'true'})
+			data = XmlSimple.xml_in(file, {'KeepRoot'=>'true'})
 		rescue Exception => e
 			puts e
 		end
@@ -119,13 +119,31 @@ class Import
 			end
 		elsif @data_source == "rpro"
 			begin
-				mapdata(data)
+				mappy(data,@map)
+#				mapdata(data)
 			rescue Exception => e
 				puts e
 			end
 		end
 		records
 	end
+
+
+def mappy(data,map)
+binding.pry
+	if data.is_a? Array
+		data.each { |i| mappy(i) }
+	end
+
+
+
+
+
+
+
+
+end
+
 
 def lookformap(needle,haystack,found)
 	return found unless found == 0
@@ -161,7 +179,6 @@ def mapdata(data)
 #		mapdata(data,map)
 	elsif data.is_a? Hash
 		data.each do |k,v|
-binding.pry
 			it = lookformap(k,@map,0)
 			puts "DATA(Hash):\n\tkey=>#{k}\n\tvalue=>#{v.to_s.slice(0,20)} ..."
 			puts "MAP(Hash): #{it}"
