@@ -19,11 +19,10 @@ class Import
 			@data = parse_csv(@file)
 		elsif @data_source == "rpro"
 			@data = parse_xml(@file)
-#binding.pry
 		else
 			raise "error"
 		end
-#		@records = convert(@data)
+		@records = convert(@data)
 
 	end
 
@@ -83,7 +82,7 @@ class Import
 		data = []
 		# Break open CSV and go through rows
 		begin
-			data = XmlSimple.xml_in(file)
+			data = XmlSimple.xml_in(file, {'ForceArray'=>'true', 'KeepRoot'=>'true'})
 		rescue Exception => e
 			puts e
 		end
@@ -94,31 +93,132 @@ class Import
 	# Creates an Array of Records
 	def convert(data)
 		records = []
-		data.each do |row|
+		if @data_source == "uniteu"
 			begin
-				record = {}
-				@map.each do |i|
-					i.each do |k,v|
-						field = k.to_s
-						v = v.split(":")
-						type = v[0]
-						col = v[1]
-						if !record.has_key?(type.to_sym)
-							record[type.to_sym] = {}
+				data.each do |row|
+					record = {}
+					@map.each do |i|
+						i.each do |k,v|
+							field = k.to_s
+							v = v.split(":")
+							type = v[0]
+							col = v[1]
+							if !record.has_key?(type.to_sym)
+								record[type.to_sym] = {}
+							end
+							record[type.to_sym][col] = row[k]
 						end
-						record[type.to_sym][col] = row[k]
+					end
+					# Make Records
+					record.each do |k,v|
+						records << Record.new(k.to_s,v)
 					end
 				end
-				# Make Records
-				record.each do |k,v|
-					records << Record.new(k.to_s,v)
-				end
+			rescue Exception => e
+					puts e
+			end
+		elsif @data_source == "rpro"
+			begin
+				mapdata(data)
 			rescue Exception => e
 				puts e
 			end
 		end
 		records
 	end
+
+def lookformap(needle,haystack,found)
+	return found unless found == 0
+	needle = needle.to_sym unless needle.is_a? Symbol
+hay = haystack.to_s.slice(0,20)
+	if haystack.is_a? Array
+		haystack.each do |nextstack|
+			found = lookformap(needle,nextstack,found)
+		end
+	elsif haystack.is_a? Hash
+		if haystack.has_key? needle
+			if haystack[needle].is_a? String
+				found = haystack[needle]
+			else
+				found = 1
+			end
+		else
+			haystack.each_value do |nextstack|
+				found = lookformap(needle,nextstack,found) unless nextstack.is_a? String
+			end
+		end
+	else
+		# do nothing
+	end
+	return found
+end
+
+def mapdata(data)
+	if data.is_a? Array
+		data.each do |i|
+			mapdata(i)
+		end
+#		mapdata(data,map)
+	elsif data.is_a? Hash
+		data.each do |k,v|
+binding.pry
+			it = lookformap(k,@map,0)
+			puts "DATA(Hash):\n\tkey=>#{k}\n\tvalue=>#{v.to_s.slice(0,20)} ..."
+			puts "MAP(Hash): #{it}"
+		end
+
+#			if map.keys.include?(k.to_sym)
+#			end
+	end
+end
+
+
+
+
+
+# Flattens hash
+#
+def cycle(data)
+	$ary = []
+	if data.is_a? Hash
+		data.each do |k,v|
+			if v.is_a? Array
+				cycle(v)
+			else
+				$ary << {k=>v}
+			end
+		end
+	elsif data.is_a? Array
+		data.each do |i|
+			cycle(i)
+		end
+	else
+		# I dunno
+	end
+puts $ary
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 =begin
 	# guesstype(filename)
