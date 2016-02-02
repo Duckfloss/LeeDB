@@ -1,4 +1,5 @@
 require 'json'
+require 'nokogiri'
 require 'xmlsimple'
 require 'csv'
 
@@ -22,7 +23,8 @@ class Import
 		else
 			raise "error"
 		end
-		@records = convert(@data)
+		mappy(@data,@map,0)
+#		@records = convert(@data)
 
 	end
 
@@ -82,7 +84,7 @@ class Import
 		data = []
 		# Break open CSV and go through rows
 		begin
-			data = XmlSimple.xml_in(file, {'KeepRoot'=>'true'})
+			data = XmlSimple.xml_in(file, {'ForceArray' => false })
 		rescue Exception => e
 			puts e
 		end
@@ -119,8 +121,7 @@ class Import
 			end
 		elsif @data_source == "rpro"
 			begin
-				mappy(data,@map)
-#				mapdata(data)
+				mappy(data, @map)
 			rescue Exception => e
 				puts e
 			end
@@ -129,21 +130,45 @@ class Import
 	end
 
 
-def mappy(data,map)
-binding.pry
+def mappy(data, map, level)
+	$level ||= 0
+	## ARRAY
 	if data.is_a? Array
-		data.each { |i| mappy(i) }
+		data.each do |i|
+x(data,map,level)
+			mappy(i, map, level)
+		end
+
+	## HASH
+	elsif data.is_a? Hash
+		data.each do |k,v|
+			level += 1
+			map = map[k.to_sym]
+x(data,map,level)
+			mappy(v, map, level)
+		end
+
+	## STRING
+	elsif data.is_a? String
+x(data,map,level)
+binding.pry
+		if map.is_a? NilClass || map == ""
+			# Skip it
+		else
+			# do something
+		end
+
+	## OTHER
+	else
+		puts "not a String, an Array, or a Hash"
 	end
-
-
-
-
-
-
-
-
 end
 
+def x(data,map,level)
+	puts "LEVEL #{level}"
+	puts "\tDATA (#{data.class})\n\t\t#{data.to_s.slice(0,12)}"
+	puts "\tMAP (#{map.class})\n\t\t#{map.to_s.slice(0,12)}"
+end
 
 def lookformap(needle,haystack,found)
 	return found unless found == 0
