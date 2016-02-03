@@ -23,8 +23,7 @@ class Import
 		else
 			raise "error"
 		end
-		mappy(@data,@map,0)
-#		@records = convert(@data)
+		@records = convert(@data)
 
 	end
 
@@ -94,7 +93,7 @@ class Import
 
 	# Creates an Array of Records
 	def convert(data)
-		records = []
+		$records = []
 		if @data_source == "uniteu"
 			begin
 				data.each do |row|
@@ -121,54 +120,84 @@ class Import
 			end
 		elsif @data_source == "rpro"
 			begin
-				mappy(data, @map)
+				mappy(data)
 			rescue Exception => e
-				puts e
+				raise e
 			end
 		end
-		records
+		$records
 	end
 
 
-def mappy(data, map, level)
-	$level ||= 0
+def mappy(data,q=[],level=0,temp={})
+
 	## ARRAY
 	if data.is_a? Array
-		data.each do |i|
-x(data,map,level)
-			mappy(i, map, level)
+		data.each do |array|
+			mappy(array,q,level,temp)
 		end
+		q.pop
 
 	## HASH
 	elsif data.is_a? Hash
+		level += 1
 		data.each do |k,v|
-			level += 1
-			map = map[k.to_sym]
-x(data,map,level)
-			mappy(v, map, level)
-		end
+			q << k
 
-	## STRING
-	elsif data.is_a? String
-x(data,map,level)
-binding.pry
-		if map.is_a? NilClass || map == ""
-			# Skip it
-		else
-			# do something
+			# If the value is another hash or array, move on recursively
+			if [Hash,Array].include? v.class
+				mappy(v,q,level,temp)
+			# Otherwise
+			else
+
+puts "cycle #{level}> #{q.to_s}> #{v}"
+
+				# Dig into the map for a translation
+				field = dig(@map,q)
+				# If the field is anything but nil
+				if !field.nil?
+					makerecord(q,v,field)
+				end
+				q.pop
+
+			end
 		end
 
 	## OTHER
 	else
-		puts "not a String, an Array, or a Hash"
+		puts "not an Array or a Hash"
+	end
+	0
+end
+
+def makerecord(q,v,field)
+
+
+
+
+
+
+
+end
+
+
+def x(data,level)
+	puts "LEVEL #{level}"
+	puts "\tDATA (#{data.class})\n\t\t#{data.to_s.slice(0,12)}"
+end
+
+def dig(hash,array)
+	array.each do |i|
+		i.to_sym unless i.is_a? Symbol
+		hash = hash[i]
+	end
+	if hash.nil? || hash == ""
+		return nil
+	else
+		hash
 	end
 end
 
-def x(data,map,level)
-	puts "LEVEL #{level}"
-	puts "\tDATA (#{data.class})\n\t\t#{data.to_s.slice(0,12)}"
-	puts "\tMAP (#{map.class})\n\t\t#{map.to_s.slice(0,12)}"
-end
 
 def lookformap(needle,haystack,found)
 	return found unless found == 0

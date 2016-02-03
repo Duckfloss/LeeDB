@@ -4,7 +4,7 @@
 				{ "Item":
 						{ "Price":
 							{ "Level": "", "Value": "product_items:price" },
-							"fldItemNum": "<sku>",
+							"fldItemNum": "product_groups:sku/product_items:sku",
 							"fldItemSID": "",
 							"fldALU": "",
 							"fldTotOnHnd": "",
@@ -15,7 +15,7 @@
 							"AvailQuantity": "product_items:quantity",
 							"Availability": ""
 						},
-				"fldStyleSID": "<pf_id>" ,
+				"fldStyleSID": "product_groups:pf_id/product_items:pf_id" ,
 				"fldDCS": "" ,
 				"fldDCSName": "" ,
 				"fldVendorCode": "product_groups:vendor_code" ,
