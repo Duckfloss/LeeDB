@@ -21,7 +21,7 @@ class Record
 
 	def initialize(type, data = {})
 		@type = type
-		@table = TYPES[type]
+		@table = TYPES[type.to_s]
 		@schema = Schema.new("db",@table)
 		@data = data
 		@details = create_record(@table)
