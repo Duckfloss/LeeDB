@@ -1,4 +1,144 @@
 {
+	"SO": {
+		"SALEORDERS": {
+			"SO": {
+				"SO_HEADER": {
+					"order_sid": "",
+					"so_number": "orders:id",
+					"so_number": "order_items:id",
+					"date_ordered": "orders:!txn_date|txn_time",
+					"so_billto_cust_sid": "orders:cust_id",
+					"so_billto_title": "",
+					"so_billto_first_name": "",
+					"so_billto_last_name": "",
+					"so_billto_address1": "",
+					"so_billto_address2": "",
+					"so_billto_city": "",
+					"so_billto_state_or_province": "",
+					"so_billto_state_short": "",
+					"so_billto_country": "",
+					"so_billto_country_short": "",
+					"so_billto_postal_code": "",
+					"so_billto_phone1": "",
+					"so_billto_phone2": "",
+					"so_billto_company": "",
+					"so_billto_email": "",
+					"so_billto_language": "",
+					"so_billto_price_level": "",
+					"so_shipto_date_created": "",
+					"so_shipto_title": "",
+					"so_shipto_first_name": "orders:+ship_name",
+					"so_shipto_last_name": "orders:+ship_name",
+					"so_shipto_address1": "orders:ship_address1",
+					"so_shipto_address2": "orders:ship_address2",
+					"so_shipto_city": "orders:ship_city",
+					"so_shipto_state_or_province": "",
+					"so_shipto_state_short": "orders:ship_state",
+					"so_shipto_country": "",
+					"so_shipto_country_short": "orders:ship_country",
+					"so_shipto_postal_code": "orders:ship_zip",
+					"so_shipto_phone1": "orders:ship_phone",
+					"so_shipto_phone2": "",
+					"so_shipto_company": "",
+					"so_shipto_email": "",
+					"so_shipto_language": "",
+					"so_shipto_price_level": "",
+					"shipping_provider": "",
+					"shipping_method": "",
+					"cc_type": "",
+					"cc_name": "",
+					"cc_number": "",
+					"cc_expire": ""
+				},
+				"SO_SUBTOTALS": {
+					"disc_percent": "",
+					"ship_percent": "",
+					"disc_amount": "",
+					"ship_amount": "orders:+price_shipping",
+					"handling_amount": "orders:+price_shipping",
+					"total_tax": "orders:price_tax",
+					"subtotal_used": "orders:price_total"
+				},
+				"SO_INSTRUCTION": {
+					"instruction": "orders:cust_note"
+				},
+				"SO_ITEM": {
+					"Number": "order_items:#sku",
+					"SID": "",
+					"QtyShipped": "order_items:quantity",
+					"ShipDate": "shipping:ship_date",
+					"ShipNumber": "shipping:tracking_id",
+					"ShipDescript": "",
+					"ShipProvider": "shipping:carrier",
+					"item_sid": "",
+					"item_no": "order_items:#sku",
+					"row_num": "",
+					"dcs": "",
+					"vc": "",
+					"desc1": "",
+					"desc2": "",
+					"tax_code": "",
+					"attr": "",
+					"size": "",
+					"misc1": "",
+					"misc2": "",
+					"misc3": "",
+					"misc4": "",
+					"decimals": "",
+					"price": "order_items:price_item",
+					"cost": "",
+					"orig_price": "",
+					"qty_ordered": "order_items:quantity",
+					"tax_amount": "",
+					"orig_tax_amount": "",
+					"tax_percent": "",
+					"upc": "",
+					"alu": "",
+					"case_qty": ""
+				},
+				"RECEIPT": {
+					"RECEIPT_ITEM": {
+						"Number": "",
+						"SID": "",
+						"Qty": "",
+						"ExtPrc": "order_items:price_item",
+						"ExtPWT": ""
+					},
+					"Number": "",
+					"SID": "",
+					"StoreStation": "",
+					"Date": "",
+					"Subtotal": "",
+					"ShipAmount": "orders:price_shipping",
+					"FeeAmount": "",
+					"TaxArea": "",
+					"TotalTax": "orders:price_tax",
+					"Total": "",
+					"ReceiptType": ""
+				},
+				"Number": "orders:#id/order_items:#id",
+				"SID": "",
+				"Status": "",
+				"Total": "orders:price_total",
+				"CaptureFund": "orders:payment_processed"
+			}
+		}
+	},
+	"CatTree": {
+		"Category_Tree": {
+			"TreeNode": {
+				"Style": {
+					"SID": "",
+					"OrderNo": ""
+				},
+				"SID": "",
+				"Caption": "",
+				"OrderNo": "",
+				"ShortDesc": "",
+				"Thumbnail": ""
+			}
+		}
+	},
 	"ECStyle":
 		{ "Style":
 				{ "Item":
@@ -34,7 +174,7 @@
 				"fldStylePicture": "" ,
 				"fldStyleThumbnail": "" ,
 				"fldAvailDateFormat": ""
-			},
+				},
 			"Style_Avail":
 				{ "Item_Avail":
 					{
@@ -45,5 +185,45 @@
 					},
 					"fldStyleSID": ""
 				}
+	},
+	"ECCustomer": {
+		"Customers": {
+			"Customer": {
+				"fldCustSID": "cusomters:rpro_id",
+				"fldFName": "customers:first_name",
+				"fldLName": "customers:last_name",
+				"fldAddr1": "customers:street1",
+				"fldAddr2": "",
+				"fldAddr3": "customers:!city|state|country",
+				"fldZIP": "customers:zip",
+				"fldPhone1": "customers:phone",
+				"fldCustID": "",
+				"fldCompany": "",
+				"web_cust_sid": "customers:id",
+				"email": "customers:email"
+			}
 		}
+	},
+	"CUST": {
+		"Customers": {
+			"Customer": {
+				"cust_sid": "customers:id",
+				"first_name": "customers:first_name",
+				"last_name": "customers:last_name",
+				"company_name": "",
+				"address1": "customers:street1",
+				"address2": "customers:street2",
+				"city": "customers:city",
+				"region_code": "customers:state",
+				"country_code": "customers:country",
+				"postal_code": "customers:zip",
+				"phone1": "customers:phone",
+				"email": "customers:email",
+				"login_id": "",
+				"rpro_cust_sid": "customers:rpro_id",
+				"password": "",
+				"has_so": ""
+			}
+		}
+	}
 }
