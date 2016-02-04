@@ -41,7 +41,7 @@ class Record
 				end
 			else
 				@fields.each do |field|
-					details[field] = @data[field]
+					details[field] = @data[field.to_sym]
 				end
 			end
 		end

@@ -93,7 +93,7 @@ class Import
 
 	# Creates an Array of Records
 	def convert(data)
-		$records = []
+		records = []
 		if @data_source == "uniteu"
 			begin
 				data.each do |row|
@@ -120,12 +120,56 @@ class Import
 			end
 		elsif @data_source == "rpro"
 			begin
-				mappy(data)
+				record = {}
+				mappy(data).each do |type, fields|
+					fields.each do |item|
+						col = item.keys[0][/[A-Za-z0-9_]+/].to_sym
+						colvalue = item.values[0]
+						thisitem = []
+						flags = item.keys[0][/[!+\-#]/]
+						if flags != nil
+							flags = flags.split(//)
+						else
+							flags = []
+						end
+
+						# Special Instructions
+						# We need to process this stuff for the flags present
+						# and then make it into records
+						if !record.has_key?(type)
+							record[type] = {}
+						end
+						if flags.empty?
+							record[type][col] = colvalue
+						else
+							if flags.include? "!"
+								raise "write filter for !"
+							end
+							if flags.include? "#"
+								if record[type].has_key?(col)
+#binding.pry
+									records << Record.new(type,record[type])
+									record[type] = {}
+								end
+								record[type][col] = colvalue
+							end
+							if flags.include? "+"
+								if record[type].has_key?(col)
+									colvalue = record[type][col]+colvalue
+								end
+								record[type][col] = colvalue
+							end
+							if flags.include? "-"
+								raise "I didn't think we'd actually have one of these \"-\""
+							end
+						end
+					end
+				end
 			rescue Exception => e
 				raise e
 			end
 		end
-		$records
+		records
 	end
 
 
@@ -150,16 +194,22 @@ def mappy(data,q=[],level=0,temp={})
 			# Otherwise
 			else
 
-puts "cycle #{level}> #{q.to_s}> #{v}"
-
 				# Dig into the map for a translation
 				field = dig(@map,q)
 				# If the field is anything but nil
 				if !field.nil?
-					makerecord(q,v,field)
+#puts "cycle #{level}> #{q.to_s}> #{v}"
+					# get the different types and fields
+					fieldhead = fieldhead(field)
+					fieldhead.each do |item|
+#						binding.pry
+						if !temp.has_key?(item.keys[0])
+							temp[item.keys[0]] = []
+						end
+						temp[item.keys[0]] << { item[item.keys[0]] => v }
+					end
 				end
 				q.pop
-
 			end
 		end
 
@@ -167,19 +217,29 @@ puts "cycle #{level}> #{q.to_s}> #{v}"
 	else
 		puts "not an Array or a Hash"
 	end
-	0
+	temp
 end
 
-def makerecord(q,v,field)
+def fieldhead(field)
+	fieldhead = []
+	if field.include? "/"
+		field = field.split('/')
+	else
+		field = [field]
+	end
 
+	field.each do |item|
+		thisitem = item.split(':')
+		fieldhead << { thisitem[0].to_sym => thisitem[1] }
+	end
+	fieldhead
+end
 
-
-
+def dosomethingspecialwithfield(hash)
 
 
 
 end
-
 
 def x(data,level)
 	puts "LEVEL #{level}"
@@ -188,7 +248,7 @@ end
 
 def dig(hash,array)
 	array.each do |i|
-		i.to_sym unless i.is_a? Symbol
+		i = i.to_sym unless i.is_a? Symbol
 		hash = hash[i]
 	end
 	if hash.nil? || hash == ""

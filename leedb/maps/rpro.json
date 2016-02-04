@@ -3,26 +3,26 @@
 		{ "Style":
 				{ "Item":
 						{ "Price":
-							{ "Level": "", "Value": "product_items:price" },
-							"fldItemNum": "product_groups:sku/product_items:sku",
+							{ "Level": "", "Value": "product_item:price" },
+							"fldItemNum": "product_item:#sku",
 							"fldItemSID": "",
 							"fldALU": "",
 							"fldTotOnHnd": "",
-							"fldCost": "product_items:cost",
-							"fldAttr": "product_items:attr_value2",
+							"fldCost": "product_item:cost",
+							"fldAttr": "product_item:attr_value2",
 							"fldUDF0": "",
-							"fldSize": "product_items:attr_value1",
-							"AvailQuantity": "product_items:quantity",
+							"fldSize": "product_item:attr_value1",
+							"AvailQuantity": "product_item:quantity",
 							"Availability": ""
 						},
-				"fldStyleSID": "product_groups:pf_id/product_items:pf_id" ,
+				"fldStyleSID": "product_group:#pf_id/product_item:pf_id" ,
 				"fldDCS": "" ,
 				"fldDCSName": "" ,
-				"fldVendorCode": "product_groups:vendor_code" ,
-				"fldDesc1": "product_items:order_code" ,
+				"fldVendorCode": "product_group:vendor_code" ,
+				"fldDesc1": "product_item:order_code" ,
 				"fldDesc2": "" ,
-				"fldStyleName": "product_groups:name" ,
-				"fldStyleLongDesc": "product_groups:description" ,
+				"fldStyleName": "product_group:name" ,
+				"fldStyleLongDesc": "product_group:description" ,
 				"fldAvailAtStore": "" ,
 				"fldInStockMsg": "" ,
 				"fldOutStockMsg": "" ,
@@ -38,9 +38,9 @@
 			"Style_Avail":
 				{ "Item_Avail":
 					{
-						"fldItemNum": "product_items:sku" ,
+						"fldItemNum": "product_item:#sku" ,
 						"fldItemSID": "" ,
-						"AvailQuantity": "product_items:quantity" ,
+						"AvailQuantity": "product_item:quantity" ,
 						"Availability": ""
 					},
 					"fldStyleSID": ""
