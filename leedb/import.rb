@@ -1,5 +1,4 @@
 require 'json'
-require 'nokogiri'
 require 'xmlsimple'
 require 'csv'
 
@@ -71,7 +70,7 @@ class Import
 		# Break open CSV and go through rows
 		begin
 			data = CSV.read(file, :headers => true,:skip_blanks => true,:header_converters => :symbol, :encoding => 'UTF-8')
-		rescue Exception => e
+		rescue
 			# Convert to UTF-8 if necessary
 			data = CSV.read(file, :headers => true,:skip_blanks => true,:header_converters => :symbol, :encoding => 'Windows-1252:UTF-8')
 		end
@@ -81,11 +80,16 @@ class Import
 	# Creates an Array of XML Rows
 	def parse_xml(file)
 		data = []
-		# Break open CSV and go through rows
+		# Break open XML and go through nodes
 		begin
+			binding.pry
+#			data = XmlSimple.xml_in(file, {'ForceArray' => false })
+#		rescue
+# >>/Users/benjones/.rvm/gems/ruby-2.2.2/gems/xml-simple-1.1.5/lib/xmlsimple.rb:191:in `xml_in': Could not parse object of type: <Fixnum>. (ArgumentError)
+			file = file_sanitizer(file)
 			data = XmlSimple.xml_in(file, {'ForceArray' => false })
 		rescue Exception => e
-			puts e
+			raise e
 		end
 		data
 	end
@@ -170,6 +174,17 @@ class Import
 			end
 		end
 		records
+	end
+
+	# replace \r\n line endings with \n line endings
+	# check encoding, if not UTF-8, transcode
+	def file_sanitizer(file)
+	  file = File.open(file, mode="r+")
+	  content = File.read(file)
+		content.force_encoding(Encoding::Windows_1252)
+		content = content.encode!(Encoding::UTF_8, :universal_newline => true)
+	  content.gsub!("\r\n","\n")
+	  file.write(content)
 	end
 
 
