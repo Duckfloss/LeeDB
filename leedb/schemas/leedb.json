@@ -14,10 +14,9 @@
 			"orders_sent": { "type": "INTEGER", "rules": null, "format": null, "default": "0" },
 			"setback": { "type": "INTEGER", "rules": null, "format": null, "default": "0" },
 			"backorder": { "type": "INTEGER", "rules": null, "format": null, "default": "0" },
-			"inventory_level": { "type": "INTEGER", "rules": null, "format": null, "default": "0" },
+			"quantity": { "type": "INTEGER", "rules": null, "format": null, "default": "0" },
 			"order_code": { "type": "TEXT", "rules": null, "format": null, "default": null },
-			"img_large": { "type": "TEXT", "rules": null, "format": "url", "default": null },
-			"google_shopping": { "type": "INTEGER", "rules": null, "format": "bool", "default": null }
+			"img_large": { "type": "TEXT", "rules": null, "format": "url", "default": null }
 		}
 	},
 	"product_groups": {
@@ -29,7 +28,6 @@
 			"description": { "type": "TEXT", "rules": null, "format": null, "default": null },
 			"msrp_price": { "type": "REAL", "rules": null, "format": "price", "default": null },
 			"list_price": { "type": "REAL", "rules": null, "format": "price", "default": null },
-			"img_thumbnail": { "type": "TEXT", "rules": null, "format": "url", "default": null },
 			"sale_price": { "type": "REAL", "rules": null, "format": "price", "default": null },
 			"sale_start": { "type": "TEXT", "rules": null, "format": "date", "default": null },
 			"sale_end": { "type": "TEXT", "rules": null, "format": "date", "default": null },
@@ -37,8 +35,7 @@
 			"attr_label1": { "type": "TEXT", "rules": null, "format": null, "default": null },
 			"attr_label2": { "type": "TEXT", "rules": null, "format": null, "default": null },
 			"attr_label3": { "type": "TEXT", "rules": null, "format": null, "default": null },
-			"attr_label4": { "type": "TEXT", "rules": null, "format": null, "default": null },
-			"google_shopping": { "type": "INTEGER", "rules": null, "format": "bool", "default": null }
+			"attr_label4": { "type": "TEXT", "rules": null, "format": null, "default": null }
 		}
 	},
 	"product_meta": {
@@ -56,8 +53,7 @@
 			"parent": { "type": "INTEGER", "rules": null, "format": "int4", "default": null },
 			"description": { "type": "TEXT", "rules": null, "format": null, "default": null },
 			"img": { "type": "TEXT", "rules": null, "format": "url", "default": null },
-			"rpro_id": { "type": "TEXT", "rules": "UNIQUE", "format": "alpha16", "default": null },
-			"google_shopping_map": { "type": "TEXT", "rules": null, "format": null, "default": null }
+			"rpro_id": { "type": "TEXT", "rules": "UNIQUE", "format": "alpha16", "default": null }
 		}
 	},
 	"customers": {
@@ -115,7 +111,8 @@
 			"price_discount": { "type": "REAL", "rules": null, "format": "price", "default": null },
 			"status": { "type": "TEXT", "rules": "NOTNULL", "format": null, "default": null },
 			"cust_note": { "type": "TEXT", "rules": null, "format": null, "default": null },
-			"cust_ip": { "type": "TEXT", "rules": "NOTNULL", "format": "ip", "default": null }
+			"cust_ip": { "type": "TEXT", "rules": "NOTNULL", "format": "ip", "default": null },
+			"payment_processed": { "type": "INTEGER", "rules": null, "format": "bool", "default": null }
 		}
 	},
 	"shipping": {

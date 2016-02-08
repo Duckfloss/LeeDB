@@ -1,7 +1,4 @@
-require 'xmlsimple'
-require 'zip'
 require 'sqlite3'
-require 'csv'
 require 'leedb/schema'
 
 module LeeDB
@@ -24,7 +21,7 @@ class Record
 
 	def initialize(type, data = {})
 		@type = type
-		@table = TYPES[type]
+		@table = TYPES[type.to_s]
 		@schema = Schema.new("db",@table)
 		@data = data
 		@details = create_record(@table)
@@ -44,7 +41,7 @@ class Record
 				end
 			else
 				@fields.each do |field|
-					details[field] = @data[field]
+					details[field] = @data[field.to_sym]
 				end
 			end
 		end
