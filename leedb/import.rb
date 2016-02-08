@@ -82,10 +82,6 @@ class Import
 		data = []
 		# Break open XML and go through nodes
 		begin
-			binding.pry
-#			data = XmlSimple.xml_in(file, {'ForceArray' => false })
-#		rescue
-# >>/Users/benjones/.rvm/gems/ruby-2.2.2/gems/xml-simple-1.1.5/lib/xmlsimple.rb:191:in `xml_in': Could not parse object of type: <Fixnum>. (ArgumentError)
 			file = file_sanitizer(file)
 			data = XmlSimple.xml_in(file, {'ForceArray' => false })
 		rescue Exception => e
@@ -151,7 +147,6 @@ class Import
 							end
 							if flags.include? "#"
 								if record[type].has_key?(col)
-#binding.pry
 									records << Record.new(type,record[type])
 									record[type] = {}
 								end
@@ -184,334 +179,84 @@ class Import
 		content.force_encoding(Encoding::Windows_1252)
 		content = content.encode!(Encoding::UTF_8, :universal_newline => true)
 	  content.gsub!("\r\n","\n")
-	  file.write(content)
+		content
 	end
 
 
-def mappy(data,q=[],level=0,temp={})
+	def mappy(data,q=[],level=0,temp={})
 
-	## ARRAY
-	if data.is_a? Array
-		data.each do |array|
-			mappy(array,q,level,temp)
-		end
-		q.pop
+		## ARRAY
+		if data.is_a? Array
+			data.each do |array|
+				mappy(array,q,level,temp)
+			end
 
-	## HASH
-	elsif data.is_a? Hash
-		level += 1
-		data.each do |k,v|
-			q << k
+		## HASH
+		elsif data.is_a? Hash
+			level += 1
+#puts "Level #{level}>"
+			data.each do |k,v|
+				q << k
 
-			# If the value is another hash or array, move on recursively
-			if [Hash,Array].include? v.class
-				mappy(v,q,level,temp)
-			# Otherwise
-			else
+				# If the value is another hash or array, move on recursively
+				if [Hash,Array].include? v.class
+					mappy(v,q,level,temp)
+				# Otherwise
+				else
 
-				# Dig into the map for a translation
-				field = dig(@map,q)
-				# If the field is anything but nil
-				if !field.nil?
-#puts "cycle #{level}> #{q.to_s}> #{v}"
-					# get the different types and fields
-					fieldhead = fieldhead(field)
-					fieldhead.each do |item|
-#						binding.pry
-						if !temp.has_key?(item.keys[0])
-							temp[item.keys[0]] = []
+					# Dig into the map for a translation
+					field = dig(@map,q)
+					# If the field is anything but nil
+					if !field.nil?
+#puts "\t#{q.to_s}> #{v.slice(0,20)}"
+						# get the different types and fields
+						fieldhead = fieldhead(field)
+						fieldhead.each do |item|
+							if !temp.has_key?(item.keys[0])
+								temp[item.keys[0]] = []
+							end
+							temp[item.keys[0]] << { item[item.keys[0]] => v }
 						end
-						temp[item.keys[0]] << { item[item.keys[0]] => v }
 					end
 				end
 				q.pop
 			end
-		end
 
-	## OTHER
-	else
-		puts "not an Array or a Hash"
-	end
-	temp
-end
-
-def fieldhead(field)
-	fieldhead = []
-	if field.include? "/"
-		field = field.split('/')
-	else
-		field = [field]
-	end
-
-	field.each do |item|
-		thisitem = item.split(':')
-		fieldhead << { thisitem[0].to_sym => thisitem[1] }
-	end
-	fieldhead
-end
-
-def dosomethingspecialwithfield(hash)
-
-
-
-end
-
-def x(data,level)
-	puts "LEVEL #{level}"
-	puts "\tDATA (#{data.class})\n\t\t#{data.to_s.slice(0,12)}"
-end
-
-def dig(hash,array)
-	array.each do |i|
-		i = i.to_sym unless i.is_a? Symbol
-		hash = hash[i]
-	end
-	if hash.nil? || hash == ""
-		return nil
-	else
-		hash
-	end
-end
-
-
-def lookformap(needle,haystack,found)
-	return found unless found == 0
-	needle = needle.to_sym unless needle.is_a? Symbol
-hay = haystack.to_s.slice(0,20)
-	if haystack.is_a? Array
-		haystack.each do |nextstack|
-			found = lookformap(needle,nextstack,found)
-		end
-	elsif haystack.is_a? Hash
-		if haystack.has_key? needle
-			if haystack[needle].is_a? String
-				found = haystack[needle]
-			else
-				found = 1
-			end
+		## OTHER
 		else
-			haystack.each_value do |nextstack|
-				found = lookformap(needle,nextstack,found) unless nextstack.is_a? String
-			end
+			puts "not an Array or a Hash"
 		end
-	else
-		# do nothing
+		temp
 	end
-	return found
-end
 
-def mapdata(data)
-	if data.is_a? Array
-		data.each do |i|
-			mapdata(i)
-		end
-#		mapdata(data,map)
-	elsif data.is_a? Hash
-		data.each do |k,v|
-			it = lookformap(k,@map,0)
-			puts "DATA(Hash):\n\tkey=>#{k}\n\tvalue=>#{v.to_s.slice(0,20)} ..."
-			puts "MAP(Hash): #{it}"
+	def fieldhead(field)
+		fieldhead = []
+		if field.include? "/"
+			field = field.split('/')
+		else
+			field = [field]
 		end
 
-#			if map.keys.include?(k.to_sym)
-#			end
+		field.each do |item|
+			thisitem = item.split(':')
+			fieldhead << { thisitem[0].to_sym => thisitem[1] }
+		end
+		fieldhead
 	end
-end
 
-
-
-
-
-# Flattens hash
-#
-def cycle(data)
-	$ary = []
-	if data.is_a? Hash
-		data.each do |k,v|
-			if v.is_a? Array
-				cycle(v)
-			else
-				$ary << {k=>v}
-			end
+	def dig(hash,array)
+		array.each do |i|
+			i = i.to_sym unless i.is_a? Symbol
+			hash = hash[i]
 		end
-	elsif data.is_a? Array
-		data.each do |i|
-			cycle(i)
-		end
-	else
-		# I dunno
-	end
-puts $ary
-end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-=begin
-	# guesstype(filename)
-	#
-	# What type of data is this? This method will tell you
-	# based on what the filename is.
-	def guesstype(filename)
-		type = case filename
-			when /^A/ then "salesorders"
-			when /^G/ then "images"
-			when /^N/ then "products"
-			when /^S/ then "customer"
-			when /^X/ then "prefs"
-			else "unknown"
+		if hash.nil? || hash == ""
+			return nil
+		else
+			hash
 		end
 	end
 
 
 
-
-		# RPro data
-		class RPro
-			@@type = [ "product","customer","salesorder","category","prefs" ]
-
-			attr_reader :Products
-
-			# toUTF(string)
-			#
-			# Changes a string encoding from Windows encoding to UTF-8.
-			# Also removes obnoxious characters.
-			def toUTF(string)
-				string.force_encoding(Encoding::Windows_1252) #Set encoding
-				string.gsub!(/\u001F/,"") #Get rid of obnoxious character
-				string = string.encode!(Encoding::UTF_8, :universal_newline => true) #Convert encoding
-			end
-
-
-			# FROMXML
-			#
-			# Converts RPro export to an object we can
-			# translate to our own database
-			def fromxml(xml, type="product")
-
-				# Convert XML to UTF-8
-				thisxml = XmlSimple.xml_in(toUTF(File.read(xml)))
-
-		# >> PRODUCT loop
-				if type == "product"
-					@Products = { "product_groups"=>[],"product_items"=>[] }
-
-					# Cycle through Hash
-					if !thisxml["Style"].nil?
-						thisxml["Style"].each do |style|
-							thisgroup = {
-								"pf_id" => "#{style["fldStyleSID"]}",
-								"name" => "#{style["fldStyleName"]}",
-								"description" => "#{style["fldStyleLongDesc"]}",
-								"img_thumbnail" => "#{style["fldStylePicture"]}",
-								"sale_price" => nil,
-								"sale_start" => nil,
-								"sale_end" => nil,
-								"img_med" => "#{style["fldStyleThumbnail"]}",
-								"attr_label1" => "#{style[""]}",
-								"attr_label2" => "#{style[""]}",
-								"attr_label3" => nil,
-								"attr_label4" => nil,
-								"google_shopping" => nil,
-								"vendor_code" => "#{style["fldVendorCode"]}"
-							}
-							thisgroup["msrp_price"] = "#{style["Item"][0]["Price"][0]["Value"]}" unless style["Item"][0]["Price"].nil?
-							thisgroup["list_price"] = "#{style["Item"][0]["Price"][0]["Value"]}" unless style["Item"][0]["Price"].nil?
-							@Products["product_groups"] << thisgroup
-
-							style["Item"].each do |item|
-								thisitem = {
-									"sku" => "#{item["fldItemNum"]}",
-									"pf_id" => "#{item["fldItemSID"]}",
-									"attr_value1" => "#{item["fldAttr"]}",
-									"attr_value2" => "#{item["fldSize"]}",
-									"cost" => "#{item["fldCost"]}",
-									"inventory_level" => "#{item["AvailQuantity"]}",
-									"order_code" => "#{item["fldALU"]}",
-									"img_large" => "#{item["fldItemSID"]}_lg.jpg",
-								}
-								thisitem["price"] = "#{item["Price"][0]["Value"]}" unless item["Price"].nil?
-								@Products["product_items"] << thisitem
-
-							end
-						end
-
-					elsif !thisxml["Style_Avail"].nil?
-						thisxml["Style_Avail"].each do |style|
-							style["Item_Avail"].each do |item|
-								thisitem = {
-									"sku" => "#{item["fldItemNum"]}",
-									"pf_id" => "#{item["fldItemSID"]}",
-									"inventory_level" => "#{item["AvailQuantity"]}"
-								}
-								@Products["product_items"] << thisitem
-							end
-						end
-					end
-
-		# >>CATEGORY loop
-				elsif type == "category"
-					@Products = { "product_meta"=>[] }
-
-					# Cycles through multidimensional array/hash
-					def cyclethru(data, parent="",style=false)
-						if data.is_a?(Array)
-							data.each { |array| cyclethru(array,parent,style) }
-						elsif data.is_a?(Hash)
-							if style == true
-								thisitem = {
-									"pf_id" => "#{data['SID']}",
-									"rpro_id" => "#{parent}"
-								}
-								$Products["product_meta"] << thisitem
-							else
-								if data.has_key? "Style"
-									cyclethru(data["Style"],data["SID"],true)
-									if data.has_key? "TreeNode"
-										cyclethru(data["TreeNode"],style=false)
-									end
-								elsif data.has_key? "TreeNode"
-									cyclethru(data["TreeNode"],style=false)
-								end
-							end
-						end
-					end
-
-					# Cycle through Array/Hash
-					if !thisxml["TreeNode"].nil?
-						cyclethru(thisxml)
-					end
-
-		# >> SALES ORDER loop
-				elsif type == "salesorder"
-
-		# >> CUSTOMER loop
-				elsif type == "customer"
-
-
-
-				end
-			end
-		end
-=end
 end
 end
