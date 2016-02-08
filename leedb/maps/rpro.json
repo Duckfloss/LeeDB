@@ -179,7 +179,7 @@
 				{ "Item_Avail":
 					{
 						"fldItemNum": "product_item:#sku" ,
-						"fldItemSID": "" ,
+						"fldItemSID": "product_item:pf_id" ,
 						"AvailQuantity": "product_item:quantity" ,
 						"Availability": ""
 					},
